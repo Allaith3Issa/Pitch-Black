@@ -1,15 +1,18 @@
 {
   "expo": {
-    "name": "b4f-player",
+    "name": "B4F Player",
     "slug": "b4f-player",
     "version": "1.0.0",
+    "scheme": "b4fplayer",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#000000",
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "backgroundColor": "#000000",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -20,6 +23,22 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#000000"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
     }
   }
 }
