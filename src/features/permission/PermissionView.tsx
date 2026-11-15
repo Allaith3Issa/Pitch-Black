@@ -11,6 +11,7 @@ import { colors, fonts, iconSizes, radius, sizes, spacing, typography } from '@/
 export default function PermissionView() {
   const skipPermission = useLibraryStore((state) => state.skipPermission);
   const allowAccess = useAllowAccess('Allow access');
+  const permissionError = useLibraryStore((state) => state.permissionError);
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -23,6 +24,8 @@ export default function PermissionView() {
       <Text style={styles.body}>
         B4F Player needs permission to read the audio files on your device so you can play them offline.
       </Text>
+
+      {permissionError ? <Text style={styles.error}>{permissionError}</Text> : null}
 
       <Button
         label={allowAccess.label}
@@ -74,6 +77,12 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: spacing.xxl,
+  },
+  error: {
+    ...typography.bodySmall,
+    color: colors.text,
+    textAlign: 'center',
+    marginBottom: spacing.lg,
   },
   allowButton: {
     alignSelf: 'stretch',

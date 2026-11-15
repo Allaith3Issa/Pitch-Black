@@ -18,12 +18,18 @@ type LibraryState = {
   permission: AudioPermission | null;
   /** The user tapped "Not now" on the permission screen (only for this app session). */
   skippedPermission: boolean;
+  /** Why the last permission check/request failed (shown on screen), or `null`. */
+  permissionError: string | null;
 
   checkPermission: () => Promise<void>;
   requestPermission: () => Promise<void>;
   loadSongs: () => Promise<void>;
   skipPermission: () => void;
 };
+
+function toMessage(error: unknown): string {
+  return error instanceof Error ? error.message : 'Could not get access to your music.';
+}
 
 // Not persisted: the library is scanned again on every app start.
 export const useLibraryStore = create<LibraryState>()((set, get) => ({
@@ -32,21 +38,22 @@ export const useLibraryStore = create<LibraryState>()((set, get) => ({
   error: null,
   permission: null,
   skippedPermission: false,
+  permissionError: null,
 
   checkPermission: async () => {
     try {
-      set({ permission: await getAudioPermission() });
-    } catch {
-      // Treat a failed check like "not asked yet" so the user can still try from the permission screen.
-      set({ permission: 'undetermined' });
+      set({ permission: await getAudioPermission(), permissionError: null });
+    } catch (error) {
+      // Still show the permission screen, with the reason.
+      set({ permission: 'undetermined', permissionError: toMessage(error) });
     }
   },
 
   requestPermission: async () => {
     try {
-      set({ permission: await requestAudioPermission() });
-    } catch {
-      set({ permission: 'denied' });
+      set({ permission: await requestAudioPermission(), permissionError: null });
+    } catch (error) {
+      set({ permissionError: toMessage(error) });
     }
   },
 

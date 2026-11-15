@@ -34,6 +34,7 @@ Status: `[ ]` not started · `[x]` done
 
 **Done when:** real songs from the phone appear in the list.
 ⚠️ First check that Expo Go can read **audio** with `expo-media-library` on Android 13+. If not, stop and report.
+> **Note:** Expo Go cannot read audio on Android 13+ — verified on device in Step 2B.
 
 ## Step 2B — Development build & real song metadata
 Why: expo-media-library does not expose title / artist / album / date added for audio.

@@ -22,6 +22,7 @@ export default function SongList() {
   const status = useLibraryStore((state) => state.status);
   const error = useLibraryStore((state) => state.error);
   const permission = useLibraryStore((state) => state.permission);
+  const permissionError = useLibraryStore((state) => state.permissionError);
   const loadSongs = useLibraryStore((state) => state.loadSongs);
   const allowAccess = useAllowAccess('Grant access');
 
@@ -29,7 +30,7 @@ export default function SongList() {
     return (
       <StateMessage
         title="No access to your music"
-        description="Allow B4F Player to read the audio files on your device."
+        description={permissionError ?? 'Allow B4F Player to read the audio files on your device.'}
         action={<Button label={allowAccess.label} onPress={allowAccess.onPress} />}
       />
     );
