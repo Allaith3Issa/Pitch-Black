@@ -28,8 +28,9 @@ Read these before working on any step:
 
 | Area | Choice |
 |---|---|
-| Framework | Expo SDK 58, Expo Go for testing (dev build only in Step 9) |
+| Framework | Expo SDK 58. Expo Go for testing until Step 2B; from Step 2B on, a development build (`expo-dev-client`) |
 | Language | TypeScript, `strict: true` |
+| Native code | Only from Step 2B. Prefer a local Expo module (Kotlin) in the top-level `modules/` folder |
 | Navigation | **Expo Router** (file-based routing, routes in `src/app/`) — see AGENTS.md |
 | State | **Zustand** (+ `persist` middleware with AsyncStorage for saved data) |
 | Audio | `expo-audio` |
@@ -100,7 +101,7 @@ When the step is done, in this order:
    - **What was done** (short bullets)
    - **Files** created / changed
    - **Packages** installed and why
-   - **How to test on Expo Go** (exact steps on the phone)
+   - **How to test on the phone (say if a new dev build is needed)** (exact steps on the phone)
    - **Notes for later** (anything out of scope you noticed)
 4. Update the step's checkbox in `docs/ROADMAP.md` to `[x]`.
 5. Make **one commit** for the step (see Git rules).
@@ -119,5 +120,6 @@ When the step is done, in this order:
 
 - Never run `npm audit fix --force` (breaks Expo dependency versions).
 - Never create or edit `android/` or `ios/` folders by hand.
-- Never run `eas build` or `npx expo prebuild` before Step 9 — and only when Allaith asks.
+- Never run `eas build`, `npx expo prebuild` or `npx expo run:android` unless the current step needs it **and** Allaith asks.
+  After any native code or config plugin change, always say clearly: **"a new dev build is needed"**.
 - Never delete files you did not create in this step without asking.

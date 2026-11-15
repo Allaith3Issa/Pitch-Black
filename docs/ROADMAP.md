@@ -1,7 +1,8 @@
 # B4F Player — Roadmap
 
 Work on **one step at a time**. A step is done only when every "Done when" item is true
-and the app runs on a real Android phone with **Expo Go**.
+and the app runs on a real Android phone: with **Expo Go** until Step 2B,
+then with the **development build** (from Step 2B on).
 
 Status: `[ ]` not started · `[x]` done
 
@@ -11,15 +12,15 @@ Status: `[ ]` not started · `[x]` done
 - [x] Figma design for all screens → see `docs/DESIGN.md`
 
 ## Step 1 — Setup & foundation
-- [ ] Folder structure from `CLAUDE.md` (`src/...`)
-- [ ] Theme: `src/theme` with colors, spacing, radius, typography (exact tokens from DESIGN.md)
-- [ ] Load Inter font; show nothing (or a black screen) until fonts are ready
-- [ ] Expo Router: switch the entry to `expo-router/entry`, routes in `src/app/`, remove the old `App.tsx`/`index.ts` entry
-- [ ] Tabs **Songs / Playlists / Favorites / Settings** in `src/app/(tabs)/` + root Stack in `src/app/_layout.tsx`
+- [x] Folder structure from `CLAUDE.md` (`src/...`)
+- [x] Theme: `src/theme` with colors, spacing, radius, typography (exact tokens from DESIGN.md)
+- [x] Load Inter font; show nothing (or a black screen) until fonts are ready
+- [x] Expo Router: switch the entry to `expo-router/entry`, routes in `src/app/`, remove the old `App.tsx`/`index.ts` entry
+- [x] Tabs **Songs / Playlists / Favorites / Settings** in `src/app/(tabs)/` + root Stack in `src/app/_layout.tsx`
       (routes for Now Playing, Playlist Detail, Add Songs, Search can be empty placeholders for now)
-- [ ] Custom floating `TabBar` component matching the design (pill indicator on the active tab)
-- [ ] Each tab shows a placeholder screen with its title
-- [ ] OLED black background everywhere, light status bar
+- [x] Custom floating `TabBar` component matching the design (pill indicator on the active tab)
+- [x] Each tab shows a placeholder screen with its title
+- [x] OLED black background everywhere, light status bar
 
 **Done when:** the app opens on Expo Go, all 4 tabs switch correctly, the tab bar looks like the design.
 
@@ -33,6 +34,21 @@ Status: `[ ]` not started · `[x]` done
 
 **Done when:** real songs from the phone appear in the list.
 ⚠️ First check that Expo Go can read **audio** with `expo-media-library` on Android 13+. If not, stop and report.
+
+## Step 2B — Development build & real song metadata
+Why: expo-media-library does not expose title / artist / album / date added for audio.
+Android's MediaStore has them, but reading them needs native code, which Expo Go cannot run.
+- [ ] Build with EAS Build (cloud). First check that `eas login` works from my network.
+- [ ] Add expo-dev-client, create the first development build, install it on the phone
+- [ ] Native data source from MediaStore: prefer a small local Expo module (Kotlin) in modules/,
+      unless a well-maintained library fits better — compare and ask me
+      Fields: id, uri, title, artist, album, albumId, durationMs, dateAdded, filename
+- [ ] Keep the MIN_SONG_DURATION_SEC filter
+- [ ] services/mediaLibrary.ts uses the new source; keep expo-media-library only if needed for permission
+- [ ] parseSongFilename stays as a fallback when tags are empty or "<unknown>"
+- [ ] Album art: if simple, return an artwork URI with each song; otherwise leave it for Step 6
+
+**Done when:** the dev build runs on my phone and songs show their real title, artist and date added.
 
 ## Step 3 — Sorting & search
 - [ ] Sort by **Name** or **Date added**, order **Ascending** or **Descending** (Sort sheet — screen 03)
@@ -64,9 +80,9 @@ Status: `[ ]` not started · `[x]` done
 **Done when:** all controls on Now Playing work and stay in sync with the Mini Player.
 
 ## Step 6 — Album art
-- [ ] Investigate how to get embedded album art for local audio files in Expo Go
-- [ ] If possible: show it in SongRow, Mini Player, Now Playing
-- [ ] If not possible in Expo Go: keep the placeholder and write the findings in the summary (revisit in Step 9)
+- [ ] Use the album art source from Step 2B (artwork URI per song); add it there first if Step 2B left it out
+- [ ] Show it in SongRow, Mini Player, Now Playing
+- [ ] Keep the placeholder when a song has no album art
 
 ## Step 7 — Favorites & Playlists
 - [ ] Favorites: heart toggles in Song Options, Mini Player, Now Playing; Favorites tab lists them (screen 11)
@@ -89,8 +105,8 @@ Status: `[ ]` not started · `[x]` done
 - [ ] Resume last song on start (toggle, saved)
 - [ ] About: app name + version from `app.json`
 
-## Step 9 — Development build & background playback
-- [ ] Create a development build with EAS (only when Allaith asks)
+## Step 9 — Background playback
+The development build already exists (Step 2B). This step needs a new dev build because of the config plugin change.
 - [ ] Background playback (`expo-audio` config plugin)
 - [ ] Media notification + lock screen controls
 - [ ] Re-test everything on the dev build
