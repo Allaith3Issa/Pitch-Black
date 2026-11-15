@@ -94,14 +94,16 @@ Put new files in the right folder. Do not create new top-level folders without a
 When the step is done, in this order:
 
 1. Run `npx tsc --noEmit` and `npx expo lint` — fix every error.
-2. Write a summary (in English) with:
+2. Run the `step-reviewer` subagent (`.claude/agents/step-reviewer.md`) and fix every ❌ item it reports.
+   Mention its ⚠️ items in the summary.
+3. Write a summary (in English) with:
    - **What was done** (short bullets)
    - **Files** created / changed
    - **Packages** installed and why
    - **How to test on Expo Go** (exact steps on the phone)
    - **Notes for later** (anything out of scope you noticed)
-3. Update the step's checkbox in `docs/ROADMAP.md` to `[x]`.
-4. Make **one commit** for the step (see Git rules).
+4. Update the step's checkbox in `docs/ROADMAP.md` to `[x]`.
+5. Make **one commit** for the step (see Git rules).
 
 ## 6. Git rules
 

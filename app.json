@@ -28,6 +28,12 @@
       "expo-router",
       "expo-font",
       [
+        "expo-media-library",
+        {
+          "granularPermissions": ["audio"]
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "image": "./assets/splash-icon.png",

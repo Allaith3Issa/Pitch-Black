@@ -11,25 +11,25 @@ Status: `[ ]` not started · `[x]` done
 - [x] Figma design for all screens → see `docs/DESIGN.md`
 
 ## Step 1 — Setup & foundation
-- [x] Folder structure from `CLAUDE.md` (`src/...`)
-- [x] Theme: `src/theme` with colors, spacing, radius, typography (exact tokens from DESIGN.md)
-- [x] Load Inter font; show nothing (or a black screen) until fonts are ready
-- [x] Expo Router: switch the entry to `expo-router/entry`, routes in `src/app/`, remove the old `App.tsx`/`index.ts` entry
-- [x] Tabs **Songs / Playlists / Favorites / Settings** in `src/app/(tabs)/` + root Stack in `src/app/_layout.tsx`
+- [ ] Folder structure from `CLAUDE.md` (`src/...`)
+- [ ] Theme: `src/theme` with colors, spacing, radius, typography (exact tokens from DESIGN.md)
+- [ ] Load Inter font; show nothing (or a black screen) until fonts are ready
+- [ ] Expo Router: switch the entry to `expo-router/entry`, routes in `src/app/`, remove the old `App.tsx`/`index.ts` entry
+- [ ] Tabs **Songs / Playlists / Favorites / Settings** in `src/app/(tabs)/` + root Stack in `src/app/_layout.tsx`
       (routes for Now Playing, Playlist Detail, Add Songs, Search can be empty placeholders for now)
-- [x] Custom floating `TabBar` component matching the design (pill indicator on the active tab)
-- [x] Each tab shows a placeholder screen with its title
-- [x] OLED black background everywhere, light status bar
+- [ ] Custom floating `TabBar` component matching the design (pill indicator on the active tab)
+- [ ] Each tab shows a placeholder screen with its title
+- [ ] OLED black background everywhere, light status bar
 
 **Done when:** the app opens on Expo Go, all 4 tabs switch correctly, the tab bar looks like the design.
 
 ## Step 2 — Permission & reading songs
-- [ ] Permission screen (design screen 01) — request audio permission with `expo-media-library`
-- [ ] Handle: granted / denied / "denied forever" (button to open app settings)
-- [ ] Load all audio files: id, title, artist (if available), duration, uri, date added
-- [ ] `libraryStore` (Zustand) holds the song list + loading/error state
-- [ ] Songs screen shows the list with `SongRow` + song count ("248 songs")
-- [ ] Empty state when there are no songs
+- [x] Permission screen (design screen 01) — request audio permission with `expo-media-library`
+- [x] Handle: granted / denied / "denied forever" (button to open app settings)
+- [x] Load all audio files: id, title, artist (if available), duration, uri, date added
+- [x] `libraryStore` (Zustand) holds the song list + loading/error state
+- [x] Songs screen shows the list with `SongRow` + song count ("248 songs")
+- [x] Empty state when there are no songs
 
 **Done when:** real songs from the phone appear in the list.
 ⚠️ First check that Expo Go can read **audio** with `expo-media-library` on Android 13+. If not, stop and report.

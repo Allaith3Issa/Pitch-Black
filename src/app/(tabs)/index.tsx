@@ -1,27 +1,22 @@
-import { Link } from 'expo-router';
 import { StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import PlaceholderScreen from '@/components/PlaceholderScreen';
-import { colors, typography } from '@/theme';
+import SongList from '@/features/songs/SongList';
+import SongsHeader from '@/features/songs/SongsHeader';
+import { colors } from '@/theme';
 
 export default function SongsScreen() {
   return (
-    <PlaceholderScreen title="Songs">
-      {/* TEMP (Step 1): test links to check the root stack. Remove when real screens exist. */}
-      <Link href="/player" style={styles.link}>
-        Open Player (modal)
-      </Link>
-      <Link href="/playlist/1" style={styles.link}>
-        Open Playlist 1
-      </Link>
-    </PlaceholderScreen>
+    <SafeAreaView style={styles.screen} edges={['top']}>
+      <SongsHeader />
+      <SongList />
+    </SafeAreaView>
   );
 }
 
-// TEMP (Step 1): style for the test links above.
 const styles = StyleSheet.create({
-  link: {
-    ...typography.body,
-    color: colors.primaryText,
+  screen: {
+    flex: 1,
+    backgroundColor: colors.bg,
   },
 });

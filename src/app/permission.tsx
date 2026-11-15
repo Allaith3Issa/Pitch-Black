@@ -1,5 +1,5 @@
-import PlaceholderScreen from '@/components/PlaceholderScreen';
+import PermissionView from '@/features/permission/PermissionView';
 
 export default function PermissionScreen() {
-  return <PlaceholderScreen title="Permission" />;
+  return <PermissionView />;
 }
