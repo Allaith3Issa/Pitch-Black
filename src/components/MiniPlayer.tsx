@@ -1,18 +1,21 @@
 import { Heart, Pause, Play, SkipForward } from 'lucide-react-native';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import Artwork from '@/components/Artwork';
 import IconButton from '@/components/IconButton';
 import MiniPlayerProgress from '@/components/MiniPlayerProgress';
 import { useCurrentSong } from '@/hooks/useCurrentSong';
+import { useTheme } from '@/hooks/useTheme';
 import { usePlayerStore } from '@/store/playerStore';
-import { colors, iconSizes, radius, sizes, spacing, typography } from '@/theme';
+import { iconSizes, makeStyles, radius, sizes, spacing, typography } from '@/theme';
 
 /**
  * Basic Mini Player (design screen 02), shown above the tab bar. Hidden when nothing is loaded.
  * The heart gets its action in Step 7; tapping the player opens Now Playing in Step 5.
  */
 export default function MiniPlayer() {
+  const styles = useStyles();
+  const { colors } = useTheme();
   const song = useCurrentSong();
   const isPlaying = usePlayerStore((state) => state.isPlaying);
   const togglePlay = usePlayerStore((state) => state.togglePlay);
@@ -59,7 +62,7 @@ export default function MiniPlayer() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   card: {
     marginHorizontal: spacing.sm,
     marginBottom: spacing.sm,
@@ -96,4 +99,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
+}));

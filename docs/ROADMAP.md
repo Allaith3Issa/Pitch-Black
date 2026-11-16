@@ -6,6 +6,10 @@ then with the **development build** (from Step 2B on).
 
 Status: `[ ]` not started · `[x]` done
 
+**Order from Step 4B on:** 4B → 4C → 5 → 7 → 8 → 6 → (one new dev build) → 9 → 10.
+**Until Step 6: no new native packages.** All native work is collected in Step 6. If a step seems to need a
+native package, stop and ask Allaith first. What to test after that build: see "Next build checklist" at the end.
+
 ---
 
 ## Step 0 — Design ✅
@@ -103,24 +107,29 @@ auto-next, highlighted row (also after re-sorting) and the Mini Player on all ta
 
 ## Step 4B — Themes & accent colors
 Done now so every later screen is written theme-aware from the start. Exact tokens: see `docs/DESIGN.md`.
-- [ ] Theme tokens: OLED + Light palettes, 6 accents (purple, blue, green, orange, pink, red) with
+- [x] Theme tokens: OLED + Light palettes, 6 accents (purple, blue, green, orange, pink, red) with
       `primary` / `primarySoft` / `primaryText` per theme, letter-cover colors per theme (used in Step 6).
       Spacing, radius, sizes and typography stay static.
-- [ ] `settingsStore` (persisted): `themeMode` 'system' | 'oled' | 'light' (default 'oled'),
+- [x] `settingsStore` (persisted): `themeMode` 'system' | 'oled' | 'light' (default 'oled'),
       `accent` (default 'purple')
-- [ ] 'system' follows the phone: dark → OLED, light → Light
-- [ ] `useTheme()` returns the resolved colors; components build styles with a small `makeStyles` helper
+- [x] 'system' follows the phone: dark → OLED, light → Light
+- [x] `useTheme()` returns the resolved colors; components build styles with a small `makeStyles` helper
       (`useMemo`) — no hardcoded colors anywhere
-- [ ] Status bar and React Navigation theme follow the theme; Android navigation bar icons checked
-      (if a new native package is needed, it waits for the next dev build)
-- [ ] `app.json` `userInterfaceStyle` → "automatic"
-- [ ] Every existing component and screen refactored to `useTheme`
-- [ ] Settings: APPEARANCE section at the top (Figma "12d") — Theme segmented control [System | OLED | Light]
+- [x] Status bar and React Navigation theme follow the theme
+- [x] `app.json` `userInterfaceStyle` → "automatic" (takes effect with the next dev build)
+- [x] Every existing component and screen refactored to `useTheme`
+- [x] Settings: APPEARANCE section at the top (Figma "12d") — Theme segmented control [System | OLED | Light]
       and 6 accent swatches (selected = ring + check). The rest of Settings stays a placeholder until Step 8.
-- [ ] Tests: theme resolution (system / oled / light × accent) as a pure function
+- [x] Tests: theme resolution (system / oled / light × accent) as a pure function
+
+> Light mode navigation bar buttons → fixed in Step 6 (needs native).
 
 **Done when (on the phone):** switching theme and accent updates the whole app instantly, the choice survives
-a restart, System follows the phone setting, nothing is hardcoded. No new dev build expected.
+a restart, System follows the phone setting, nothing is hardcoded.
+✅ Verified on device: theme and accent switch the whole app instantly and survive a restart, System follows
+the phone. Only open point: the navigation bar buttons in Light mode (see Step 6).
+
+## Step 4C — (scope comes with Allaith's Step 4C prompt)
 
 ## Step 5 — Now Playing & Mini Player
 Step 5: slider already in the Step 4 dev build.
@@ -134,21 +143,6 @@ Step 5: slider already in the Step 4 dev build.
 - [ ] "Shuffle" button on the Songs screen
 
 **Done when:** all controls on Now Playing work and stay in sync with the Mini Player.
-
-## Step 6 — Covers, song info, share
-One dev build for all native parts of this step.
-- [ ] Cover from the audio file itself first (embedded artwork), cached in the app
-- [ ] Show covers in SongRow, Mini Player, Now Playing
-- [ ] Songs with no cover: colored placeholder with the first letter of the title
-- [ ] First find which free cover sources (no API key) work from my network — test them before building on them
-- [ ] No cover → a "Search for a cover" button **only on Now Playing**, on top of the artwork placeholder:
-      searches online by artist + title, shows several options, I pick one
-- [ ] A chosen cover is saved in the **app cache only** (never written into the audio file)
-- [ ] After a cover is chosen, Now Playing also offers "Change cover" / "Remove cover"
-- [ ] Respect the "Download covers on Wi-Fi only" setting (Step 8; default on)
-- [ ] Song info sheet from the "⋯" menu: title, artist, album, duration, filename, folder, size, format,
-      bitrate, date added
-- [ ] Share from the "⋯" menu: Android share sheet with the audio file itself
 
 ## Step 7 — Favorites & Playlists
 - [ ] Favorites: heart toggles in Song Options, Mini Player, Now Playing; Favorites tab lists them (screen 11)
@@ -173,11 +167,37 @@ One dev build for all native parts of this step.
 - [ ] Rescan music library (+ "Last scan" time)
 - [ ] Default sort (opens the Sort sheet)
 - [ ] Resume last song on start (toggle, saved)
-- [ ] "Download covers on Wi-Fi only" (toggle, default on)
+- [ ] "Download covers on Wi-Fi only" (toggle, default on — saved now, used by covers in Step 6)
 - [ ] Skip buttons: on/off + seconds (5 / 10 / 15 / 30)
 - [ ] About: app name + version from `app.json`
 
 > **From the full review:** rescan needs a separate `isRefreshing` flag — don't replace the list with a spinner.
+
+## Step 6 — Covers, song info, share, navigation bar (all native work)
+Step 6 collects **all** native work, so there is only one new dev build (after this step).
+- [ ] Cover from the audio file itself first (embedded artwork), cached in the app
+- [ ] Show covers in SongRow, Mini Player, Now Playing
+- [ ] Songs with no cover: colored placeholder with the first letter of the title
+- [ ] First find which free cover sources (no API key) work from my network — test them before building on them
+- [ ] No cover → a "Search for a cover" button **only on Now Playing**, on top of the artwork placeholder:
+      searches online by artist + title, shows several options, I pick one
+- [ ] A chosen cover is saved in the **app cache only** (never written into the audio file)
+- [ ] After a cover is chosen, Now Playing also offers "Change cover" / "Remove cover"
+- [ ] Respect the "Download covers on Wi-Fi only" setting (Step 8; default on)
+- [ ] Song info sheet from the "⋯" menu: title, artist, album, duration, filename, folder, size, format,
+      bitrate, date added
+- [ ] Share from the "⋯" menu: Android share sheet with the audio file itself
+- [ ] Light mode navigation bar buttons (found in Step 4B — light buttons on white). Exact solution:
+      - `npx expo install expo-navigation-bar`
+      - in `app.json` plugins: `["expo-navigation-bar", { "enforceContrast": false, "style": "light" }]`
+        (`enforceContrast: false` = fully transparent bar, so the style is not ignored on 3-button navigation;
+        `"light"` matches the OLED default at launch)
+      - in `src/app/_layout.tsx`, next to `<StatusBar>`: `<NavigationBar style={isDark ? 'light' : 'dark'} />`
+        (import `{ NavigationBar }` from `expo-navigation-bar`; the component, not the deprecated top-level `setStyle`)
+      - the style is the **button** color: `'light'` = light buttons (OLED), `'dark'` = dark buttons (Light)
+      - check 3-button mode: the tab bar and Mini Player stay clear of the buttons
+
+**Then: one new dev build** → go through the "Next build checklist" below.
 
 ## Step 9 — Background playback
 `enableBackgroundPlayback` is already on in the `expo-audio` plugin since the Step 4 dev build, so this step may be
@@ -194,6 +214,19 @@ JS only (`shouldPlayInBackground`, `setActiveForLockScreen`). Check that first.
 
 > **From the full review:** remove the iOS/web config from `app.json`; add `preview` and `production`
 > profiles to `eas.json`.
+
+---
+
+## Next build checklist
+What to test on the phone after the next dev build (end of Step 6). Add to it whenever a step leaves
+something for that build.
+- [ ] Navigation bar buttons: light on OLED, dark on Light, switch instantly, follow the phone on System
+- [ ] Navigation bar in **3-button mode** and gesture mode: no gray band, tab bar and Mini Player stay clear
+      of the buttons, buttons readable in both themes
+- [ ] Cold start in Light mode: buttons may be light for a moment before JS runs (plugin starts with "light")
+- [ ] `userInterfaceStyle: "automatic"` (Step 4B): System theme still follows the phone; OLED / Light still forced
+- [ ] All Step 6 native features (covers, song info, share) on the new build
+- [ ] Quick re-test of everything before: playback, sorting, search, themes, favorites, playlists, settings
 
 ---
 

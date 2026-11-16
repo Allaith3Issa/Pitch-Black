@@ -1,11 +1,11 @@
 import { ArrowDown, ArrowUp, Clock, Music } from 'lucide-react-native';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import BottomSheet from '@/components/BottomSheet';
 import SectionLabel from '@/components/SectionLabel';
 import SheetOption from '@/components/SheetOption';
 import { useSettingsStore } from '@/store/settingsStore';
-import { colors, sizes, spacing } from '@/theme';
+import { makeStyles, sizes, spacing } from '@/theme';
 
 type SortSheetProps = {
   visible: boolean;
@@ -14,6 +14,7 @@ type SortSheetProps = {
 
 /** Sort sheet (design screen 03). The list re-sorts as soon as an option is tapped. */
 export default function SortSheet({ visible, onClose }: SortSheetProps) {
+  const styles = useStyles();
   const sortBy = useSettingsStore((state) => state.sortBy);
   const sortOrder = useSettingsStore((state) => state.sortOrder);
   const setSortBy = useSettingsStore((state) => state.setSortBy);
@@ -49,11 +50,11 @@ export default function SortSheet({ visible, onClose }: SortSheetProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   divider: {
     height: sizes.hairline,
     backgroundColor: colors.border,
     marginHorizontal: spacing.lg,
     marginTop: spacing.sm,
   },
-});
+}));

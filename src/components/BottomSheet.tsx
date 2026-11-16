@@ -2,7 +2,7 @@ import { type ReactNode, useEffect, useState } from 'react';
 import { Animated, Modal, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { colors, radius, scrim, sizes, spacing } from '@/theme';
+import { makeStyles, radius, sizes, spacing } from '@/theme';
 
 type BottomSheetProps = {
   visible: boolean;
@@ -16,6 +16,7 @@ const CLOSE_DURATION_MS = 200;
 
 /** Sheet that slides up from the bottom, with a dark scrim behind it. */
 export default function BottomSheet({ visible, onClose, children }: BottomSheetProps) {
+  const styles = useStyles();
   const { height: screenHeight } = useWindowDimensions();
   const insets = useSafeAreaInsets();
 
@@ -65,9 +66,9 @@ export default function BottomSheet({ visible, onClose, children }: BottomSheetP
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   scrim: {
-    backgroundColor: scrim,
+    backgroundColor: colors.scrim,
   },
   sheet: {
     position: 'absolute',
@@ -90,4 +91,4 @@ const styles = StyleSheet.create({
     backgroundColor: colors.textTertiary,
     marginBottom: spacing.sm,
   },
-});
+}));

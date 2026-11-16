@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { colors, spacing, typography } from '@/theme';
+import { makeStyles, spacing, typography } from '@/theme';
 
 type PlaceholderScreenProps = {
   title: string;
@@ -10,6 +10,7 @@ type PlaceholderScreenProps = {
 
 // Temporary screen body used until each screen is built in its own step.
 export default function PlaceholderScreen({ title, children }: PlaceholderScreenProps) {
+  const styles = useStyles();
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
@@ -18,7 +19,7 @@ export default function PlaceholderScreen({ title, children }: PlaceholderScreen
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   container: {
     flex: 1,
     alignItems: 'center',
@@ -30,4 +31,4 @@ const styles = StyleSheet.create({
     ...typography.screenTitle,
     color: colors.text,
   },
-});
+}));

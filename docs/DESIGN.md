@@ -4,30 +4,60 @@
 
 If this file and Figma disagree, Figma wins. If you have Figma access (MCP), read the screen before building it.
 
-- Theme: **OLED** — pure black background, white text, **dark purple** accent
+- Themes: **OLED** (default: pure black background, white text), **Light**, or **System** (follows the phone);
+  6 accent colors, **purple** by default. See "Color tokens" below.
 - Device frame: 360 × 800 (Android). Use flex layouts — never hardcode screen sizes.
 - Font: **Inter** (Regular 400, Medium 500, Semi Bold 600, Bold 700)
 - Icons: lucide style, 2px stroke, rounded caps → `lucide-react-native`
 
 ---
 
-## Color tokens → `src/theme/colors.ts`
+## Color tokens → `src/theme/palettes.ts`
 
-| Token | Hex | Use |
+Since Step 4B the colors depend on the **theme** (System / OLED / Light, default OLED) and the **accent**
+(default purple), chosen in Settings. Code never imports a color directly: use `useTheme()` or `makeStyles()`.
+"System" follows the phone: dark → OLED, light → Light.
+
+### Base colors
+
+| Token | OLED | Light | Use |
+|---|---|---|---|
+| `bg` | `#000000` | `#FFFFFF` | Screen background |
+| `surface` | `#121212` | `#F4F4F5` | Mini player, tab bar, sheets, dialogs, setting cards |
+| `surface2` | `#1E1E1E` | `#E9E9EC` | Secondary buttons, inputs, chips, artwork placeholder, segmented control track |
+| `border` | `#262626` | `#E4E4E7` | Dividers, outlines, slider track |
+| `text` | `#FFFFFF` | `#0A0A0A` | Main text and icons |
+| `textSecondary` | `#8E8E8E` | `#6B6B70` | Subtitles, meta, inactive icons |
+| `textTertiary` | `#5C5C5C` | `#9A9AA0` | Section labels, inactive tabs, placeholders |
+| `onPrimary` | `#FFFFFF` | `#FFFFFF` | Text/icons on `primary` |
+| `scrim` | black 65% | black 40% | Layer behind sheets/dialogs |
+
+### Accent colors
+
+`primary` is the same in both themes. Uses: `primary` = Play button, play/pause circle, slider fill, toggles,
+checkboxes, selected segment · `primarySoft` = playing row background · `primaryText` = accent text/icons on `bg`
+(playing title, active tab, filled heart).
+
+| Accent | `primary` | `primarySoft` OLED / Light | `primaryText` OLED / Light |
+|---|---|---|---|
+| purple (default) | `#6D28D9` | `#1F1235` / `#EDE9FE` | `#A78BFA` / `#6D28D9` |
+| blue | `#2563EB` | `#0F1E3D` / `#DBEAFE` | `#93C5FD` / `#1D4ED8` |
+| green | `#059669` | `#0B2A22` / `#D1FAE5` | `#6EE7B7` / `#047857` |
+| orange | `#EA580C` | `#3A1A0B` / `#FFEDD5` | `#FDBA74` / `#C2410C` |
+| pink | `#DB2777` | `#3A0F24` / `#FCE7F3` | `#F9A8D4` / `#BE185D` |
+| red | `#DC2626` | `#3A1010` / `#FEE2E2` | `#FCA5A5` / `#B91C1C` |
+
+### Letter-cover colors (Step 6)
+
+Background / letter, per theme.
+
+| Color | OLED | Light |
 |---|---|---|
-| `bg` | `#000000` | Screen background (true black) |
-| `surface` | `#121212` | Mini player, tab bar, sheets, dialogs, setting cards |
-| `surface2` | `#1E1E1E` | Secondary buttons, inputs, chips, artwork placeholder |
-| `border` | `#262626` | Dividers, outlines, slider track |
-| `primary` | `#6D28D9` | **Accent (dark purple):** Play button, play/pause circle, slider fill, toggles, checkboxes |
-| `onPrimary` | `#FFFFFF` | Text/icons on `primary` |
-| `primarySoft` | `#1F1235` | Playing row background, active tab pill |
-| `primaryText` | `#A78BFA` | Purple text/icons on black (playing title, active tab, filled heart) |
-| `text` | `#FFFFFF` | Main text and icons |
-| `textSecondary` | `#8E8E8E` | Subtitles, meta, inactive icons |
-| `textTertiary` | `#5C5C5C` | Section labels, inactive tabs, placeholders |
-
-Scrim behind sheets/dialogs: `bg` at 65% opacity.
+| purple | `#2A1A45` / `#C4B5FD` | `#EDE9FE` / `#6D28D9` |
+| blue | `#13284A` / `#93C5FD` | `#DBEAFE` / `#1D4ED8` |
+| teal | `#0F3330` / `#5EEAD4` | `#CCFBF1` / `#0F766E` |
+| rose | `#3D1525` / `#FDA4AF` | `#FFE4E6` / `#BE123C` |
+| amber | `#3A2A0F` / `#FCD34D` | `#FEF3C7` / `#B45309` |
 
 ## Spacing, radius → `src/theme/spacing.ts`
 
@@ -78,6 +108,8 @@ Section labels (SORT BY, LIBRARY...) are uppercase with ~10% letter spacing.
 | `Dialog` | Centered, width 312, `surface`, radius 24 |
 | `TextInput` | Height 44–48, `surface2`, radius 12. Focused: 1.5px `primary` border |
 | `Toggle` | 44×26. On: `primary` track, white knob. Off: `surface2` track |
+| `SegmentedControl` | Height 44, `surface2` track, radius 12, 4px padding. Selected segment: `primary` bg (radius 8), `onPrimary` label Semi Bold. Others: `textSecondary` label |
+| `AccentSwatch` | 36 circle in the accent's `primary`, inside a 44 touch area. Selected: 2px ring in `text` + white check |
 | `Checkbox` | 24 round. On: `primary` + white check. Off: 2px `textTertiary` border |
 
 ---

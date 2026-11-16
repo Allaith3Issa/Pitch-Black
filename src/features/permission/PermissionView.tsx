@@ -1,14 +1,17 @@
 import { Folder, Music } from 'lucide-react-native';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Button from '@/components/Button';
 import { useAllowAccess } from '@/hooks/useAllowAccess';
+import { useTheme } from '@/hooks/useTheme';
 import { useLibraryStore } from '@/store/libraryStore';
-import { colors, fonts, iconSizes, radius, sizes, spacing, typography } from '@/theme';
+import { fonts, iconSizes, makeStyles, radius, sizes, spacing, typography } from '@/theme';
 
 // Design screen 01. When access is granted (or skipped), the root layout's guard moves us to the tabs.
 export default function PermissionView() {
+  const styles = useStyles();
+  const { colors } = useTheme();
   const skipPermission = useLibraryStore((state) => state.skipPermission);
   const allowAccess = useAllowAccess('Allow access');
   const permissionError = useLibraryStore((state) => state.permissionError);
@@ -43,7 +46,7 @@ export default function PermissionView() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   screen: {
     flex: 1,
     alignItems: 'center',
@@ -56,7 +59,7 @@ const styles = StyleSheet.create({
     height: sizes.illustration,
     borderRadius: radius.pill,
     backgroundColor: colors.surface,
-    borderWidth: 1,
+    borderWidth: sizes.hairline,
     borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
@@ -102,4 +105,4 @@ const styles = StyleSheet.create({
     minHeight: sizes.buttonLarge,
     marginBottom: spacing.sm,
   },
-});
+}));

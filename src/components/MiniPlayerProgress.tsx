@@ -1,10 +1,11 @@
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { usePlaybackProgressStore } from '@/store/playbackProgressStore';
-import { colors, sizes } from '@/theme';
+import { makeStyles, sizes } from '@/theme';
 
 /** Thin progress line at the bottom of the Mini Player. The only part that re-renders every tick. */
 export default function MiniPlayerProgress() {
+  const styles = useStyles();
   const fraction = usePlaybackProgressStore((state) =>
     state.durationSec > 0 ? Math.min(state.positionSec / state.durationSec, 1) : 0,
   );
@@ -16,7 +17,7 @@ export default function MiniPlayerProgress() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   track: {
     height: sizes.progressLine,
     backgroundColor: colors.border,
@@ -25,4 +26,4 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: colors.primary,
   },
-});
+}));

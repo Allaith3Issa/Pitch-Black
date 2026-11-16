@@ -1,7 +1,8 @@
 import type { LucideIcon } from 'lucide-react-native';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, Text } from 'react-native';
 
-import { colors, fonts, iconSizes, radius, sizes, spacing, typography } from '@/theme';
+import { useTheme } from '@/hooks/useTheme';
+import { fonts, iconSizes, makeStyles, radius, sizes, spacing, typography } from '@/theme';
 
 type ChipProps = {
   label: string;
@@ -12,6 +13,8 @@ type ChipProps = {
 
 /** Small pill button: icon 16 + label (e.g. the sort chip "Name · A–Z"). */
 export default function Chip({ label, icon: Icon, onPress, accessibilityLabel }: ChipProps) {
+  const styles = useStyles();
+  const { colors } = useTheme();
   return (
     <Pressable
       onPress={onPress}
@@ -25,7 +28,7 @@ export default function Chip({ label, icon: Icon, onPress, accessibilityLabel }:
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   chip: {
     height: sizes.chip,
     flexDirection: 'row',
@@ -43,4 +46,4 @@ const styles = StyleSheet.create({
     fontFamily: fonts.medium,
     color: colors.text,
   },
-});
+}));

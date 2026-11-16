@@ -1,7 +1,8 @@
 import { Check, type LucideIcon } from 'lucide-react-native';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, Text } from 'react-native';
 
-import { colors, fonts, iconSizes, radius, sizes, spacing, typography } from '@/theme';
+import { useTheme } from '@/hooks/useTheme';
+import { fonts, iconSizes, makeStyles, radius, sizes, spacing, typography } from '@/theme';
 
 type SheetOptionProps = {
   label: string;
@@ -13,6 +14,8 @@ type SheetOptionProps = {
 
 /** One row in a bottom sheet: icon + label. */
 export default function SheetOption({ label, icon: Icon, onPress, selected = false }: SheetOptionProps) {
+  const styles = useStyles();
+  const { colors } = useTheme();
   const contentColor = selected ? colors.text : colors.textSecondary;
 
   return (
@@ -29,7 +32,7 @@ export default function SheetOption({ label, icon: Icon, onPress, selected = fal
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   row: {
     height: sizes.sheetOption,
     flexDirection: 'row',
@@ -53,4 +56,4 @@ const styles = StyleSheet.create({
   selectedLabel: {
     fontFamily: fonts.semiBold,
   },
-});
+}));

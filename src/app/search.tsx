@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import SearchHeader from '@/features/search/SearchHeader';
 import SearchResults from '@/features/search/SearchResults';
-import { colors } from '@/theme';
 
 export default function SearchScreen() {
   const [query, setQuery] = useState('');
@@ -17,9 +16,9 @@ export default function SearchScreen() {
   );
 }
 
+// The background comes from the navigator (theme-aware), see src/app/_layout.tsx.
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: colors.bg,
   },
 });

@@ -6,12 +6,13 @@ import StateMessage from '@/components/StateMessage';
 import SongActions from '@/features/songs/SongActions';
 import { useAllowAccess } from '@/hooks/useAllowAccess';
 import { useSortedSongs } from '@/hooks/useSortedSongs';
+import { useTheme } from '@/hooks/useTheme';
 import { useLibraryStore } from '@/store/libraryStore';
-import { colors } from '@/theme';
 
 /** The sorted song list with its loading / error / empty / no-access states. */
 export default function SongList() {
   const songs = useSortedSongs();
+  const { colors } = useTheme();
   const status = useLibraryStore((state) => state.status);
   const error = useLibraryStore((state) => state.error);
   const permission = useLibraryStore((state) => state.permission);

@@ -33,6 +33,12 @@ export const sizes = {
   miniPlayButton: 40,
   /** Progress line at the bottom of the Mini Player. */
   progressLine: 2,
+  /** Segmented control height (Settings: Theme). */
+  segmentedControl: 44,
+  /** Accent color circle in Settings. */
+  swatch: 36,
+  /** Ring around the selected accent swatch. */
+  swatchRing: 2,
 } as const;
 
 // Icon line thickness (lucide strokeWidth). The active tab icon is bolder.

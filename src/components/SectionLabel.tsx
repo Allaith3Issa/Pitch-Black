@@ -1,6 +1,6 @@
-import { StyleSheet, Text } from 'react-native';
+import { Text } from 'react-native';
 
-import { colors, fonts, letterSpacing, screenPadding, spacing, typography } from '@/theme';
+import { fonts, letterSpacing, makeStyles, screenPadding, spacing, typography } from '@/theme';
 
 type SectionLabelProps = {
   label: string;
@@ -8,10 +8,11 @@ type SectionLabelProps = {
 
 /** Small uppercase label above a group of options, e.g. "SORT BY". */
 export default function SectionLabel({ label }: SectionLabelProps) {
+  const styles = useStyles();
   return <Text style={styles.label}>{label.toUpperCase()}</Text>;
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   label: {
     ...typography.caption,
     fontFamily: fonts.semiBold,
@@ -21,4 +22,4 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
     paddingBottom: spacing.sm,
   },
-});
+}));

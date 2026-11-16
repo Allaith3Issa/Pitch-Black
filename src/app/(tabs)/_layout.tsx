@@ -3,7 +3,8 @@ import { Heart, ListMusic, type LucideIcon, Music, Settings } from 'lucide-react
 import type { ColorValue } from 'react-native';
 
 import TabBar from '@/components/TabBar';
-import { colors, iconStrokes } from '@/theme';
+import { useTheme } from '@/hooks/useTheme';
+import { iconStrokes } from '@/theme';
 
 type TabIconProps = { focused: boolean; color: ColorValue; size: number };
 
@@ -16,6 +17,7 @@ function tabIcon(Icon: LucideIcon) {
 }
 
 export default function TabsLayout() {
+  const { colors } = useTheme();
   return (
     <Tabs
       tabBar={(props) => <TabBar {...props} />}

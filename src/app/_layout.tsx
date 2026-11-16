@@ -5,40 +5,25 @@ import {
   Inter_700Bold,
   useFonts,
 } from '@expo-google-fonts/inter';
-import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
+import { Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import * as SystemUI from 'expo-system-ui';
 import { useEffect } from 'react';
 
 import { useLibraryStartup } from '@/hooks/useLibraryStartup';
+import { useNavigationTheme } from '@/hooks/useNavigationTheme';
 import { usePlayerErrorToast } from '@/hooks/usePlayerErrorToast';
+import { useSystemUiTheme } from '@/hooks/useSystemUiTheme';
+import { useTheme } from '@/hooks/useTheme';
 import { configureAudio } from '@/services/audioPlayer';
 import { useSettingsStore } from '@/store/settingsStore';
-import { colors } from '@/theme';
 
 // Keep the splash screen visible until the fonts, the saved settings and the first permission check are ready.
 SplashScreen.preventAutoHideAsync();
 
-// Black root view, so there is no white flash behind screens.
-SystemUI.setBackgroundColorAsync(colors.bg);
-
 // Play on silent mode and pause when another app takes the audio (see services/audioPlayer).
 // If it fails, playback still works with the default audio mode.
 configureAudio().catch(() => undefined);
-
-// React Navigation theme with our OLED colors (used by headers and the navigation container).
-const navigationTheme = {
-  ...DarkTheme,
-  colors: {
-    ...DarkTheme.colors,
-    primary: colors.primary,
-    background: colors.bg,
-    card: colors.bg,
-    text: colors.text,
-    border: colors.border,
-  },
-};
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
@@ -50,6 +35,10 @@ export default function RootLayout() {
 
   const { isPermissionChecked, canEnterApp } = useLibraryStartup();
   usePlayerErrorToast();
+  // The theme (OLED / Light + accent) for system bars, the root view and the navigators.
+  useSystemUiTheme();
+  const { colors, isDark } = useTheme();
+  const navigationTheme = useNavigationTheme();
   // Wait for the saved sort, so the list does not show A–Z first and then jump.
   const isSettingsReady = useSettingsStore((state) => state.isHydrated);
 
@@ -69,7 +58,7 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={navigationTheme}>
-      <StatusBar style="light" />
+      <StatusBar style={isDark ? 'light' : 'dark'} />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}>
         {/* The app: only after access is granted or the user tapped "Not now". */}
         <Stack.Protected guard={canEnterApp}>

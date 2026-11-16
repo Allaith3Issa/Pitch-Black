@@ -1,12 +1,15 @@
 import type { BottomTabBarProps } from 'expo-router/js-tabs';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import MiniPlayer from '@/components/MiniPlayer';
-import { colors, fonts, iconSizes, radius, sizes, spacing, typography } from '@/theme';
+import { useTheme } from '@/hooks/useTheme';
+import { fonts, iconSizes, makeStyles, radius, sizes, spacing, typography } from '@/theme';
 
 // Floating tab bar from DESIGN.md. Icons and labels come from each screen's options.
 // The Mini Player sits right above it, so it shows on every tab.
 export default function TabBar({ state, descriptors, emitter, navigateToTab, insets }: BottomTabBarProps) {
+  const styles = useStyles();
+  const { colors } = useTheme();
   return (
     <View style={[styles.wrapper, { paddingBottom: insets.bottom + spacing.md }]}>
       <MiniPlayer />
@@ -43,7 +46,7 @@ export default function TabBar({ state, descriptors, emitter, navigateToTab, ins
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   wrapper: {
     backgroundColor: colors.bg,
   },
@@ -53,7 +56,7 @@ const styles = StyleSheet.create({
     height: sizes.tabBar,
     backgroundColor: colors.surface,
     borderRadius: radius.tabBar,
-    borderWidth: 1,
+    borderWidth: sizes.hairline,
     borderColor: colors.border,
   },
   tab: {
@@ -68,4 +71,4 @@ const styles = StyleSheet.create({
   labelActive: {
     fontFamily: fonts.semiBold,
   },
-});
+}));

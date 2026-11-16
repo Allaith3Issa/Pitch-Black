@@ -1,8 +1,9 @@
 import { Search, X } from 'lucide-react-native';
 import { useState } from 'react';
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, TextInput, View } from 'react-native';
 
-import { colors, iconSizes, radius, sizes, spacing, typography } from '@/theme';
+import { useTheme } from '@/hooks/useTheme';
+import { iconSizes, makeStyles, radius, sizes, spacing, typography } from '@/theme';
 
 type SearchInputProps = {
   value: string;
@@ -13,6 +14,8 @@ type SearchInputProps = {
 
 /** Search field: search icon, text input and a clear (X) button when there is text. */
 export default function SearchInput({ value, onChangeText, placeholder, autoFocus = false }: SearchInputProps) {
+  const styles = useStyles();
+  const { colors } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
 
   return (
@@ -47,7 +50,7 @@ export default function SearchInput({ value, onChangeText, placeholder, autoFocu
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   container: {
     flex: 1,
     height: sizes.input,
@@ -71,4 +74,4 @@ const styles = StyleSheet.create({
     color: colors.text,
     padding: 0,
   },
-});
+}));

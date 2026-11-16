@@ -1,7 +1,8 @@
 import type { LucideIcon } from 'lucide-react-native';
-import { Pressable, type StyleProp, StyleSheet, Text, type ViewStyle } from 'react-native';
+import { Pressable, type StyleProp, Text, type ViewStyle } from 'react-native';
 
-import { colors, fonts, iconSizes, radius, sizes, spacing, typography } from '@/theme';
+import { useTheme } from '@/hooks/useTheme';
+import { fonts, iconSizes, makeStyles, radius, sizes, spacing, typography } from '@/theme';
 
 type ButtonVariant = 'primary' | 'secondary' | 'text';
 
@@ -13,20 +14,17 @@ type ButtonProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-const CONTENT_COLORS: Record<ButtonVariant, string> = {
-  primary: colors.onPrimary,
-  secondary: colors.text,
-  text: colors.textSecondary,
-};
-
 /**
- * - `primary`: purple background, white content (DESIGN.md "Button / Primary")
- * - `secondary`: dark gray background, white content (DESIGN.md "Button / Secondary")
+ * - `primary`: accent background, white content (DESIGN.md "Button / Primary")
+ * - `secondary`: gray background, normal text color (DESIGN.md "Button / Secondary")
  * - `text`: no background, secondary text (e.g. "Not now")
  */
 export default function Button({ label, onPress, variant = 'primary', icon: Icon, style }: ButtonProps) {
+  const styles = useStyles();
+  const { colors } = useTheme();
   const isFilled = variant !== 'text';
-  const contentColor = CONTENT_COLORS[variant];
+  const contentColor =
+    variant === 'primary' ? colors.onPrimary : variant === 'secondary' ? colors.text : colors.textSecondary;
 
   return (
     <Pressable
@@ -48,7 +46,7 @@ export default function Button({ label, onPress, variant = 'primary', icon: Icon
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   base: {
     minHeight: sizes.button,
     flexDirection: 'row',
@@ -74,4 +72,4 @@ const styles = StyleSheet.create({
   textLabel: {
     ...typography.body,
   },
-});
+}));

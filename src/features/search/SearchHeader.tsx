@@ -4,7 +4,8 @@ import { StyleSheet, View } from 'react-native';
 
 import IconButton from '@/components/IconButton';
 import SearchInput from '@/components/SearchInput';
-import { colors, iconSizes, screenPadding, spacing } from '@/theme';
+import { useTheme } from '@/hooks/useTheme';
+import { iconSizes, screenPadding, spacing } from '@/theme';
 
 type SearchHeaderProps = {
   query: string;
@@ -13,6 +14,7 @@ type SearchHeaderProps = {
 
 /** Back button + search input (design screen 05). */
 export default function SearchHeader({ query, onChangeQuery }: SearchHeaderProps) {
+  const { colors } = useTheme();
   return (
     <View style={styles.container}>
       <IconButton

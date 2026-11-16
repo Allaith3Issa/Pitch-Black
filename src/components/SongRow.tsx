@@ -1,10 +1,11 @@
 import { ChartNoAxesColumn, Ellipsis } from 'lucide-react-native';
 import { memo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import Artwork from '@/components/Artwork';
 import IconButton from '@/components/IconButton';
-import { colors, fonts, iconSizes, radius, screenPadding, sizes, spacing, typography } from '@/theme';
+import { useTheme } from '@/hooks/useTheme';
+import { fonts, iconSizes, makeStyles, radius, screenPadding, sizes, spacing, typography } from '@/theme';
 import type { Song } from '@/types/song';
 import { formatDuration } from '@/utils/formatDuration';
 
@@ -18,6 +19,8 @@ type SongRowProps = {
 
 // The "⋯" button gets its action in Step 7.
 function SongRow({ song, index, isCurrent, onPress }: SongRowProps) {
+  const styles = useStyles();
+  const { colors } = useTheme();
   const duration = formatDuration(song.durationSec);
 
   return (
@@ -54,7 +57,7 @@ function SongRow({ song, index, isCurrent, onPress }: SongRowProps) {
 
 export default memo(SongRow);
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   row: {
     height: sizes.songRow,
     flexDirection: 'row',
@@ -92,4 +95,4 @@ const styles = StyleSheet.create({
     ...typography.bodySmall,
     color: colors.textSecondary,
   },
-});
+}));

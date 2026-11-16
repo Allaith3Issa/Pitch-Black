@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import SongFlatList from '@/components/SongFlatList';
 import StateMessage from '@/components/StateMessage';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useSongSearch } from '@/hooks/useSongSearch';
 import { useLibraryStore } from '@/store/libraryStore';
-import { colors, screenPadding, spacing, typography } from '@/theme';
+import { makeStyles, screenPadding, spacing, typography } from '@/theme';
 
 type SearchResultsProps = {
   query: string;
@@ -16,6 +16,7 @@ const SEARCH_DELAY_MS = 150;
 
 /** Results count + matching songs, or a hint / "No songs found". */
 export default function SearchResults({ query }: SearchResultsProps) {
+  const styles = useStyles();
   const debouncedQuery = useDebouncedValue(query, SEARCH_DELAY_MS);
   const results = useSongSearch(debouncedQuery);
   const isLibraryReady = useLibraryStore((state) => state.status === 'ready' && state.permission === 'granted');
@@ -46,7 +47,7 @@ export default function SearchResults({ query }: SearchResultsProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   container: {
     flex: 1,
   },
@@ -56,4 +57,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: screenPadding,
     paddingBottom: spacing.sm,
   },
-});
+}));

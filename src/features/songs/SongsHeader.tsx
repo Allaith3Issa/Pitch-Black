@@ -1,18 +1,21 @@
 import { router } from 'expo-router';
 import { ArrowUpDown, Search } from 'lucide-react-native';
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import Chip from '@/components/Chip';
 import IconButton from '@/components/IconButton';
 import SortSheet from '@/features/songs/SortSheet';
+import { useTheme } from '@/hooks/useTheme';
 import { useLibraryStore } from '@/store/libraryStore';
 import { useSettingsStore } from '@/store/settingsStore';
-import { colors, iconSizes, screenPadding, spacing, typography } from '@/theme';
+import { iconSizes, makeStyles, screenPadding, spacing, typography } from '@/theme';
 import { getSortLabel } from '@/utils/getSortLabel';
 
 /** "Songs" title + search button, then the song count and the sort chip once the library is loaded. */
 export default function SongsHeader() {
+  const styles = useStyles();
+  const { colors } = useTheme();
   const count = useLibraryStore((state) => state.songs.length);
   const isReady = useLibraryStore((state) => state.status === 'ready' && state.permission === 'granted');
   const sortBy = useSettingsStore((state) => state.sortBy);
@@ -47,7 +50,7 @@ export default function SongsHeader() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   container: {
     paddingLeft: screenPadding,
     paddingTop: spacing.sm,
@@ -74,4 +77,4 @@ const styles = StyleSheet.create({
     ...typography.bodySmall,
     color: colors.textSecondary,
   },
-});
+}));

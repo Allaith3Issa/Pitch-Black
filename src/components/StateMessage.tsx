@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { colors, spacing, typography } from '@/theme';
+import { makeStyles, spacing, typography } from '@/theme';
 
 type StateMessageProps = {
   title: string;
@@ -14,6 +14,7 @@ type StateMessageProps = {
 
 /** Centered message for empty / error states. */
 export default function StateMessage({ title, description, detail, action }: StateMessageProps) {
+  const styles = useStyles();
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
@@ -24,7 +25,7 @@ export default function StateMessage({ title, description, detail, action }: Sta
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   container: {
     flex: 1,
     alignItems: 'center',
@@ -47,4 +48,4 @@ const styles = StyleSheet.create({
     color: colors.textTertiary,
     textAlign: 'center',
   },
-});
+}));
