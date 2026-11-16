@@ -12,6 +12,8 @@ import * as SystemUI from 'expo-system-ui';
 import { useEffect } from 'react';
 
 import { useLibraryStartup } from '@/hooks/useLibraryStartup';
+import { usePlayerErrorToast } from '@/hooks/usePlayerErrorToast';
+import { configureAudio } from '@/services/audioPlayer';
 import { useSettingsStore } from '@/store/settingsStore';
 import { colors } from '@/theme';
 
@@ -20,6 +22,10 @@ SplashScreen.preventAutoHideAsync();
 
 // Black root view, so there is no white flash behind screens.
 SystemUI.setBackgroundColorAsync(colors.bg);
+
+// Play on silent mode and pause when another app takes the audio (see services/audioPlayer).
+// If it fails, playback still works with the default audio mode.
+configureAudio().catch(() => undefined);
 
 // React Navigation theme with our OLED colors (used by headers and the navigation container).
 const navigationTheme = {
@@ -43,6 +49,7 @@ export default function RootLayout() {
   });
 
   const { isPermissionChecked, canEnterApp } = useLibraryStartup();
+  usePlayerErrorToast();
   // Wait for the saved sort, so the list does not show A–Z first and then jump.
   const isSettingsReady = useSettingsStore((state) => state.isHydrated);
 

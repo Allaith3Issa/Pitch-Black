@@ -66,10 +66,10 @@ Section labels (SORT BY, LIBRARY...) are uppercase with ~10% letter spacing.
 
 | Component | Description |
 |---|---|
-| `TabBar` | Floating bar, `surface`, radius 32, 1px `border`, 12px side margin, 64 high. 4 tabs (icon + label). Active tab: icon inside a 56×30 `primarySoft` pill, icon + label `primaryText`. Inactive: `textTertiary` |
+| `TabBar` | Floating bar, `surface`, radius 32, 1px `border`, 12px side margin, 64 high. 4 tabs (icon + label): Songs (music), Playlists (list-music), Favorites (heart), Settings (**gear**). **Active:** no background behind the icon; icon `primaryText` with a bolder line (strokeWidth 2.6), label `primaryText` Semi Bold. **Inactive:** icon `textTertiary` (strokeWidth 2), label Medium. Icons keep the same size, so nothing moves when switching tabs |
 | `SongRow` | Height ~64. Artwork 48 + title (15 Medium) + subtitle "Artist • 3:45" (13 `textSecondary`) + "⋯" button. **Playing state:** `primarySoft` background, radius 12, title `primaryText` Semi Bold, equalizer icon |
-| `Artwork` | `surface2` square with a music icon in `textTertiary`. Sizes: 44, 48, 120, 296 |
-| `MiniPlayer` | `surface`, radius 14, 8px margin. Artwork 44, title (14 Semi Bold), artist (12), heart, 40px `primary` play/pause circle. 2px progress line at the bottom (`border` track, `primary` fill) |
+| `Artwork` | `surface2` square with a music icon in `textTertiary`. Sizes: 44, 48, 120, 296. From Step 6: the song's cover; songs without a cover get a colored placeholder with the first letter of the title |
+| `MiniPlayer` | `surface`, radius 14, 8px margin. Artwork 44, title (14 Semi Bold), artist (12), heart, **next** (Allaith's decision, not in Figma), 40px `primary` play/pause circle. 2px progress line at the bottom (`border` track, `primary` fill) |
 | `Button` | Height 44, radius 12, icon + label (15 Semi Bold). **Primary:** `primary` bg, white content. **Secondary:** `surface2` bg, white content |
 | `Chip` | Pill, `surface2`, sort icon 16 + label (13 Medium) |
 | `IconButton` | 44×44 round touch area, icon 24 |
@@ -91,13 +91,13 @@ Section labels (SORT BY, LIBRARY...) are uppercase with ~10% letter spacing.
 | 03 | Sort Sheet | component (sheet) | SORT BY: Name, Date added · ORDER: Ascending, Descending |
 | 04 | Song Options | component (sheet) | Song header, Add to favorites, Add to playlist |
 | 05 | Search | `search.tsx` | Back + input with clear, results count, song list |
-| 06 | Now Playing | `player.tsx` (modal) | Chevron down, "NOW PLAYING / All songs", ⋯, artwork 296, title/artist + heart, slider + times, shuffle / prev / play-pause (76) / next / repeat |
+| 06 | Now Playing | `player.tsx` (modal) | Chevron down, "NOW PLAYING / All songs", ⋯, artwork 296, title/artist + heart, slider + times, shuffle / prev / play-pause (76) / next / repeat. **New:** skip back / skip forward (default 10 s) around play/pause, can be turned off. No cover → "Search for a cover" button on the artwork placeholder; with a chosen cover → "Change cover" / "Remove cover" |
 | 07 | Playlists | `(tabs)/playlists.tsx` | Title + plus, "Create playlist" dashed tile, playlist rows |
 | 08 | New Playlist Dialog | component (dialog) | Name input, Cancel / Create |
 | 09 | Playlist Detail | `playlist/[id]/index.tsx` | Back + ⋯, cover 120, name, "8 songs · 31 min", Play / Shuffle, Add songs, list |
 | 10 | Add Songs | `playlist/[id]/add-songs.tsx` (modal) | Close, "Add songs to …", Add (n) button, search, rows with checkboxes |
 | 11 | Favorites | `(tabs)/favorites.tsx` | Title + search, count, Play / Shuffle, list |
-| 12 | Settings | `(tabs)/settings.tsx` | LIBRARY (Rescan, Default sort) · PLAYBACK (toggles) · ABOUT (version) |
+| 12 | Settings | `(tabs)/settings.tsx` | LIBRARY (Rescan, Default sort) · PLAYBACK (toggles, skip buttons on/off + 5 / 10 / 15 / 30 s) · COVERS ("Download covers on Wi-Fi only", default on) · ABOUT (version) |
 | 13 | Add to Playlist | component (sheet) | Song info, New playlist, playlists (check on already added) |
 
 The Mini Player and Tab Bar show on all tab screens. The Mini Player is hidden when nothing is playing.

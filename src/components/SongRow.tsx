@@ -1,26 +1,35 @@
-import { Ellipsis } from 'lucide-react-native';
+import { ChartNoAxesColumn, Ellipsis } from 'lucide-react-native';
 import { memo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import Artwork from '@/components/Artwork';
 import IconButton from '@/components/IconButton';
-import { colors, iconSizes, screenPadding, sizes, spacing, typography } from '@/theme';
+import { colors, fonts, iconSizes, radius, screenPadding, sizes, spacing, typography } from '@/theme';
 import type { Song } from '@/types/song';
 import { formatDuration } from '@/utils/formatDuration';
 
 type SongRowProps = {
   song: Song;
+  index: number;
+  /** This song is loaded in the player (playing or paused): show the "Playing" state. */
+  isCurrent: boolean;
+  onPress: (index: number) => void;
 };
 
-// Default state only. The "Playing" state comes in Step 4; the "⋯" button gets its action in Step 7.
-function SongRow({ song }: SongRowProps) {
+// The "⋯" button gets its action in Step 7.
+function SongRow({ song, index, isCurrent, onPress }: SongRowProps) {
   const duration = formatDuration(song.durationSec);
 
   return (
-    <View style={styles.row}>
+    <Pressable
+      onPress={() => onPress(index)}
+      accessibilityRole="button"
+      accessibilityLabel={isCurrent ? `${song.title}, now playing` : song.title}
+      style={({ pressed }) => [styles.row, isCurrent && styles.rowCurrent, pressed && styles.pressed]}
+    >
       <Artwork size={sizes.artworkRow} />
       <View style={styles.texts}>
-        <Text style={styles.title} numberOfLines={1}>
+        <Text style={[styles.title, isCurrent && styles.titleCurrent]} numberOfLines={1}>
           {song.title}
         </Text>
         {/* Artist and duration are separate texts, so mixed Arabic/English artists cannot move the
@@ -34,11 +43,12 @@ function SongRow({ song }: SongRowProps) {
           <Text style={styles.subtitle}>{song.artist !== null ? ` • ${duration}` : duration}</Text>
         </View>
       </View>
+      {isCurrent && <ChartNoAxesColumn color={colors.primaryText} size={iconSizes.option} />}
       <IconButton
         icon={<Ellipsis color={colors.textSecondary} size={iconSizes.md} />}
         accessibilityLabel={`More options for ${song.title}`}
       />
-    </View>
+    </Pressable>
   );
 }
 
@@ -53,6 +63,13 @@ const styles = StyleSheet.create({
     paddingLeft: screenPadding,
     paddingRight: spacing.xs,
   },
+  rowCurrent: {
+    backgroundColor: colors.primarySoft,
+    borderRadius: radius.md,
+  },
+  pressed: {
+    opacity: 0.7,
+  },
   texts: {
     flex: 1,
     gap: spacing.xs,
@@ -60,6 +77,10 @@ const styles = StyleSheet.create({
   title: {
     ...typography.body,
     color: colors.text,
+  },
+  titleCurrent: {
+    fontFamily: fonts.semiBold,
+    color: colors.primaryText,
   },
   subtitleRow: {
     flexDirection: 'row',

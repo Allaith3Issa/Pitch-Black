@@ -3,7 +3,7 @@ import { Pressable, type StyleProp, StyleSheet, Text, type ViewStyle } from 'rea
 
 import { colors, fonts, iconSizes, radius, sizes, spacing, typography } from '@/theme';
 
-type ButtonVariant = 'primary' | 'text';
+type ButtonVariant = 'primary' | 'secondary' | 'text';
 
 type ButtonProps = {
   label: string;
@@ -13,13 +13,20 @@ type ButtonProps = {
   style?: StyleProp<ViewStyle>;
 };
 
+const CONTENT_COLORS: Record<ButtonVariant, string> = {
+  primary: colors.onPrimary,
+  secondary: colors.text,
+  text: colors.textSecondary,
+};
+
 /**
  * - `primary`: purple background, white content (DESIGN.md "Button / Primary")
+ * - `secondary`: dark gray background, white content (DESIGN.md "Button / Secondary")
  * - `text`: no background, secondary text (e.g. "Not now")
  */
 export default function Button({ label, onPress, variant = 'primary', icon: Icon, style }: ButtonProps) {
-  const isPrimary = variant === 'primary';
-  const contentColor = isPrimary ? colors.onPrimary : colors.textSecondary;
+  const isFilled = variant !== 'text';
+  const contentColor = CONTENT_COLORS[variant];
 
   return (
     <Pressable
@@ -27,13 +34,14 @@ export default function Button({ label, onPress, variant = 'primary', icon: Icon
       accessibilityRole="button"
       style={({ pressed }) => [
         styles.base,
-        isPrimary && styles.primary,
+        variant === 'primary' && styles.primary,
+        variant === 'secondary' && styles.secondary,
         pressed && styles.pressed,
         style,
       ]}
     >
       {Icon && <Icon color={contentColor} size={iconSizes.sm} />}
-      <Text style={[isPrimary ? styles.primaryLabel : styles.textLabel, { color: contentColor }]}>
+      <Text style={[isFilled ? styles.filledLabel : styles.textLabel, { color: contentColor }]}>
         {label}
       </Text>
     </Pressable>
@@ -53,10 +61,13 @@ const styles = StyleSheet.create({
   primary: {
     backgroundColor: colors.primary,
   },
+  secondary: {
+    backgroundColor: colors.surface2,
+  },
   pressed: {
     opacity: 0.8,
   },
-  primaryLabel: {
+  filledLabel: {
     ...typography.body,
     fontFamily: fonts.semiBold,
   },

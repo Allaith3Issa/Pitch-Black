@@ -3,6 +3,7 @@ import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import Button from '@/components/Button';
 import SongFlatList from '@/components/SongFlatList';
 import StateMessage from '@/components/StateMessage';
+import SongActions from '@/features/songs/SongActions';
 import { useAllowAccess } from '@/hooks/useAllowAccess';
 import { useSortedSongs } from '@/hooks/useSortedSongs';
 import { useLibraryStore } from '@/store/libraryStore';
@@ -52,7 +53,12 @@ export default function SongList() {
     return <StateMessage title="No songs found" description="Add audio files to your phone and try again." />;
   }
 
-  return <SongFlatList songs={songs} />;
+  return (
+    <>
+      <SongActions songs={songs} />
+      <SongFlatList songs={songs} />
+    </>
+  );
 }
 
 const styles = StyleSheet.create({

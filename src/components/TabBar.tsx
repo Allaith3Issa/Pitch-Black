@@ -1,12 +1,15 @@
 import type { BottomTabBarProps } from 'expo-router/js-tabs';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import MiniPlayer from '@/components/MiniPlayer';
 import { colors, fonts, iconSizes, radius, sizes, spacing, typography } from '@/theme';
 
 // Floating tab bar from DESIGN.md. Icons and labels come from each screen's options.
+// The Mini Player sits right above it, so it shows on every tab.
 export default function TabBar({ state, descriptors, emitter, navigateToTab, insets }: BottomTabBarProps) {
   return (
     <View style={[styles.wrapper, { paddingBottom: insets.bottom + spacing.md }]}>
+      <MiniPlayer />
       <View style={styles.bar}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
@@ -30,9 +33,7 @@ export default function TabBar({ state, descriptors, emitter, navigateToTab, ins
               accessibilityState={{ selected: focused }}
               accessibilityLabel={label}
             >
-              <View style={[styles.iconPill, focused && styles.iconPillActive]}>
-                {options.tabBarIcon?.({ focused, color, size: iconSizes.tab })}
-              </View>
+              {options.tabBarIcon?.({ focused, color, size: iconSizes.tab })}
               <Text style={[styles.label, focused && styles.labelActive, { color }]}>{label}</Text>
             </Pressable>
           );
@@ -45,9 +46,9 @@ export default function TabBar({ state, descriptors, emitter, navigateToTab, ins
 const styles = StyleSheet.create({
   wrapper: {
     backgroundColor: colors.bg,
-    paddingHorizontal: spacing.md,
   },
   bar: {
+    marginHorizontal: spacing.md,
     flexDirection: 'row',
     height: sizes.tabBar,
     backgroundColor: colors.surface,
@@ -60,16 +61,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.xs,
-  },
-  iconPill: {
-    width: sizes.tabPillWidth,
-    height: sizes.tabPillHeight,
-    borderRadius: radius.pill,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconPillActive: {
-    backgroundColor: colors.primarySoft,
   },
   label: {
     ...typography.tabLabel,

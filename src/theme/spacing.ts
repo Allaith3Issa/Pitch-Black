@@ -16,6 +16,8 @@ export const radius = {
   md: 12,
   lg: 16,
   xl: 24,
+  /** Mini Player card. */
+  miniPlayer: 14,
   tabBar: 32,
   pill: 999,
 } as const;

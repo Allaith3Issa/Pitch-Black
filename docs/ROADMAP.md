@@ -78,33 +78,77 @@ real titles and artists from MediaStore tags.
 still 641 songs with the native 30 s filter.
 
 ## Step 4 — Playback engine
-- [ ] `services/audio` wrapper around `expo-audio`
-- [ ] `playerStore`: queue, current index, isPlaying, position, duration
-- [ ] Actions: play song, pause, resume, next, previous
-- [ ] Tapping a song plays it and sets the queue to the current (sorted) list
-- [ ] "Play" button plays the list from the start
-- [ ] Auto-play the next song when one ends
-- [ ] Playing row is highlighted (`SongRow` State=Playing)
+- [x] `services/audio` wrapper around `expo-audio`
+- [x] `playerStore`: queue, current index, isPlaying, position, duration
+- [x] Actions: play song, pause, resume, next, previous
+- [x] Tapping a song plays it and sets the queue to the current (sorted) list
+- [x] "Play" button plays the list from the start
+- [x] Auto-play the next song when one ends
+- [x] Playing row is highlighted (`SongRow` State=Playing)
+- [x] **Basic Mini Player** (moved here from Step 5, to test pause/next on the phone): above the tab bar on all tabs,
+      hidden when nothing is loaded — artwork placeholder, title, artist, heart (no action yet), next, play/pause,
+      thin progress line. Tapping it does nothing yet.
+- [x] Song that cannot be played → short message (toast) and skip to the next one
+- [x] TabBar redesign (JS only): no pill behind the active icon; active icon `primaryText` + bolder line
+      (strokeWidth 2.6, inactive 2); Settings tab uses the gear icon
+- [x] Native packages for Steps 4 + 5 in one dev build: `expo-audio` + its peer `expo-asset` (background playback enabled in the
+      plugin, for Step 9) and `@react-native-community/slider`
 
 > **From the full review:** check early that `expo-audio` plays the `content://` URIs from MediaStore.
 > The queue holds song **ids**, not copies of songs.
 
 **Done when:** songs play, pause, skip and continue automatically while the app is open.
+✅ Verified on device: content:// URIs from MediaStore play with expo-audio; play / pause / next / previous,
+auto-next, highlighted row (also after re-sorting) and the Mini Player on all tabs work.
+
+## Step 4B — Themes & accent colors
+Done now so every later screen is written theme-aware from the start. Exact tokens: see `docs/DESIGN.md`.
+- [ ] Theme tokens: OLED + Light palettes, 6 accents (purple, blue, green, orange, pink, red) with
+      `primary` / `primarySoft` / `primaryText` per theme, letter-cover colors per theme (used in Step 6).
+      Spacing, radius, sizes and typography stay static.
+- [ ] `settingsStore` (persisted): `themeMode` 'system' | 'oled' | 'light' (default 'oled'),
+      `accent` (default 'purple')
+- [ ] 'system' follows the phone: dark → OLED, light → Light
+- [ ] `useTheme()` returns the resolved colors; components build styles with a small `makeStyles` helper
+      (`useMemo`) — no hardcoded colors anywhere
+- [ ] Status bar and React Navigation theme follow the theme; Android navigation bar icons checked
+      (if a new native package is needed, it waits for the next dev build)
+- [ ] `app.json` `userInterfaceStyle` → "automatic"
+- [ ] Every existing component and screen refactored to `useTheme`
+- [ ] Settings: APPEARANCE section at the top (Figma "12d") — Theme segmented control [System | OLED | Light]
+      and 6 accent swatches (selected = ring + check). The rest of Settings stays a placeholder until Step 8.
+- [ ] Tests: theme resolution (system / oled / light × accent) as a pure function
+
+**Done when (on the phone):** switching theme and accent updates the whole app instantly, the choice survives
+a restart, System follows the phone setting, nothing is hardcoded. No new dev build expected.
 
 ## Step 5 — Now Playing & Mini Player
-- [ ] Mini Player above the tab bar (screen 02) — title, artist, heart, play/pause, thin progress line
+Step 5: slider already in the Step 4 dev build.
+- [ ] (The basic Mini Player was built in Step 4.)
 - [ ] Tapping Mini Player opens Now Playing (screen 06)
 - [ ] Now Playing: artwork placeholder, title, artist, heart, slider (`@react-native-community/slider`), times
 - [ ] Seek with the slider
 - [ ] Shuffle (on/off) and Repeat (off / all / one)
+- [ ] Skip back / skip forward buttons around play/pause (default 10 s; options 5 / 10 / 15 / 30 s;
+      can be turned off). The setting UI comes in Step 8 — until then use the default.
 - [ ] "Shuffle" button on the Songs screen
 
 **Done when:** all controls on Now Playing work and stay in sync with the Mini Player.
 
-## Step 6 — Album art
-- [ ] Use the album art source from Step 2B (artwork URI per song); add it there first if Step 2B left it out
-- [ ] Show it in SongRow, Mini Player, Now Playing
-- [ ] Keep the placeholder when a song has no album art
+## Step 6 — Covers, song info, share
+One dev build for all native parts of this step.
+- [ ] Cover from the audio file itself first (embedded artwork), cached in the app
+- [ ] Show covers in SongRow, Mini Player, Now Playing
+- [ ] Songs with no cover: colored placeholder with the first letter of the title
+- [ ] First find which free cover sources (no API key) work from my network — test them before building on them
+- [ ] No cover → a "Search for a cover" button **only on Now Playing**, on top of the artwork placeholder:
+      searches online by artist + title, shows several options, I pick one
+- [ ] A chosen cover is saved in the **app cache only** (never written into the audio file)
+- [ ] After a cover is chosen, Now Playing also offers "Change cover" / "Remove cover"
+- [ ] Respect the "Download covers on Wi-Fi only" setting (Step 8; default on)
+- [ ] Song info sheet from the "⋯" menu: title, artist, album, duration, filename, folder, size, format,
+      bitrate, date added
+- [ ] Share from the "⋯" menu: Android share sheet with the audio file itself
 
 ## Step 7 — Favorites & Playlists
 - [ ] Favorites: heart toggles in Song Options, Mini Player, Now Playing; Favorites tab lists them (screen 11)
@@ -129,13 +173,16 @@ still 641 songs with the native 30 s filter.
 - [ ] Rescan music library (+ "Last scan" time)
 - [ ] Default sort (opens the Sort sheet)
 - [ ] Resume last song on start (toggle, saved)
+- [ ] "Download covers on Wi-Fi only" (toggle, default on)
+- [ ] Skip buttons: on/off + seconds (5 / 10 / 15 / 30)
 - [ ] About: app name + version from `app.json`
 
 > **From the full review:** rescan needs a separate `isRefreshing` flag — don't replace the list with a spinner.
 
 ## Step 9 — Background playback
-The development build already exists (Step 2B). This step needs a new dev build because of the config plugin change.
-- [ ] Background playback (`expo-audio` config plugin)
+`enableBackgroundPlayback` is already on in the `expo-audio` plugin since the Step 4 dev build, so this step may be
+JS only (`shouldPlayInBackground`, `setActiveForLockScreen`). Check that first.
+- [ ] Background playback (`expo-audio`)
 - [ ] Media notification + lock screen controls
 - [ ] Re-test everything on the dev build
 
@@ -147,3 +194,9 @@ The development build already exists (Step 2B). This step needs a new dev build 
 
 > **From the full review:** remove the iOS/web config from `app.json`; add `preview` and `production`
 > profiles to `eas.json`.
+
+---
+
+## Ideas for later
+Not planned for now.
+- Set a song as ringtone / notification sound

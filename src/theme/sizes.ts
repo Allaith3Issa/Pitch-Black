@@ -10,9 +10,6 @@ export const sizes = {
   illustration: 120,
   /** Floating tab bar height. */
   tabBar: 64,
-  /** Pill behind the active tab icon. */
-  tabPillWidth: 56,
-  tabPillHeight: 30,
   /** SongRow height. */
   songRow: 64,
   /** Artwork size in a SongRow. */
@@ -30,6 +27,18 @@ export const sizes = {
   hairline: 1,
   /** Input border when focused. */
   focusBorder: 1.5,
+  /** Artwork in the Mini Player. */
+  artworkMini: 44,
+  /** Round play/pause button in the Mini Player. */
+  miniPlayButton: 40,
+  /** Progress line at the bottom of the Mini Player. */
+  progressLine: 2,
+} as const;
+
+// Icon line thickness (lucide strokeWidth). The active tab icon is bolder.
+export const iconStrokes = {
+  regular: 2,
+  bold: 2.6,
 } as const;
 
 export const iconSizes = {

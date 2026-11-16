@@ -14,6 +14,8 @@ export type LibraryStatus = 'idle' | 'loading' | 'ready' | 'error';
 
 type LibraryState = {
   songs: Song[];
+  /** The same songs, by id: a fast lookup for the player queue (which holds ids only). */
+  songsById: Record<string, Song>;
   status: LibraryStatus;
   error: AppError | null;
   /** `null` until the first check has finished. */
@@ -47,6 +49,7 @@ function toLoadError(error: unknown): AppError {
 // Not persisted: the library is scanned again on every app start.
 export const useLibraryStore = create<LibraryState>()((set, get) => ({
   songs: [],
+  songsById: {},
   status: 'idle',
   error: null,
   permission: null,
@@ -75,7 +78,8 @@ export const useLibraryStore = create<LibraryState>()((set, get) => ({
     set({ status: 'loading', error: null });
     try {
       const songs = await loadAllSongs();
-      set({ songs, status: 'ready' });
+      const songsById = Object.fromEntries(songs.map((song) => [song.id, song]));
+      set({ songs, songsById, status: 'ready' });
     } catch (error) {
       set({ status: 'error', error: toLoadError(error) });
       // Access was removed (e.g. in the system settings): re-check, so the screen offers "Grant access"

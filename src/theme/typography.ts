@@ -23,6 +23,8 @@ export const typography = {
   bodySmall: { fontFamily: fonts.regular, fontSize: 13 },
   caption: { fontFamily: fonts.regular, fontSize: 12 },
   tabLabel: { fontFamily: fonts.medium, fontSize: 11 },
+  /** Song title in the Mini Player (DESIGN.md: 14 Semi Bold). */
+  miniPlayerTitle: { fontFamily: fonts.semiBold, fontSize: 14 },
 } as const satisfies Record<string, TypographyToken>;
 
 // Section labels (SORT BY, LIBRARY...) are uppercase with ~10% letter spacing: 12 × 0.1 = 1.2.
