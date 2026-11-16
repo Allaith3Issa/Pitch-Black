@@ -39,8 +39,11 @@ Status: `[ ]` not started · `[x]` done
 ## Step 2B — Development build & real song metadata
 Why: expo-media-library does not expose title / artist / album / date added for audio.
 Android's MediaStore has them, but reading them needs native code, which Expo Go cannot run.
-- [ ] Build with EAS Build (cloud). First check that `eas login` works from my network.
-- [ ] Add expo-dev-client, create the first development build, install it on the phone
+- [x] Build with EAS Build (cloud). First check that `eas login` works from my network.
+- [x] Add expo-dev-client, create the first development build, install it on the phone
+      ✅ Verified on device (2B-1): permission dialog works, "Don't allow" stays on the permission screen,
+      641 songs listed, durations correct (MediaStore duration is in ms), no audio under 30 s,
+      "Artist - Title" filename split works (other files show no artist).
 - [ ] Native data source from MediaStore: prefer a small local Expo module (Kotlin) in modules/,
       unless a well-maintained library fits better — compare and ask me
       Fields: id, uri, title, artist, album, albumId, durationMs, dateAdded, filename
