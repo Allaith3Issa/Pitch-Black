@@ -14,5 +14,5 @@ You review B4F Player code after a step is finished. You do NOT write or edit co
      thin route files in src/app, FlatList for lists, no dead code, no console.log.
    - Design: components match DESIGN.md tokens and screens.
    - Errors: permission denial, empty states and failures are handled.
-   - Expo Go compatibility and packages installed with `npx expo install`.
+   - Expo Go / dev build compatibility and packages installed with `npx expo install`.
 4. Report in English as a short list: ❌ must fix, ⚠️ should fix, ✅ good. Include file and line.
