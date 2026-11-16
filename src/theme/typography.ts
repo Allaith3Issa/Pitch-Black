@@ -24,3 +24,8 @@ export const typography = {
   caption: { fontFamily: fonts.regular, fontSize: 12 },
   tabLabel: { fontFamily: fonts.medium, fontSize: 11 },
 } as const satisfies Record<string, TypographyToken>;
+
+// Section labels (SORT BY, LIBRARY...) are uppercase with ~10% letter spacing: 12 × 0.1 = 1.2.
+export const letterSpacing = {
+  label: 1.2,
+} as const;

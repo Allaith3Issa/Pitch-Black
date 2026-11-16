@@ -17,10 +17,27 @@ export const sizes = {
   songRow: 64,
   /** Artwork size in a SongRow. */
   artworkRow: 48,
+  /** Sort chip height. */
+  chip: 32,
+  /** Row in a bottom sheet (SheetOption). */
+  sheetOption: 48,
+  /** Grab handle at the top of a bottom sheet. */
+  sheetHandleWidth: 36,
+  sheetHandleHeight: 4,
+  /** Search input height. */
+  input: 48,
+  /** Thin lines: dividers and borders. */
+  hairline: 1,
+  /** Input border when focused. */
+  focusBorder: 1.5,
 } as const;
 
 export const iconSizes = {
+  /** Chip icon. */
+  xs: 16,
   sm: 18,
+  /** SheetOption icon. */
+  option: 20,
   /** Tab bar icons. */
   tab: 22,
   md: 24,

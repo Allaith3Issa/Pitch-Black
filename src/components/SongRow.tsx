@@ -15,7 +15,6 @@ type SongRowProps = {
 // Default state only. The "Playing" state comes in Step 4; the "⋯" button gets its action in Step 7.
 function SongRow({ song }: SongRowProps) {
   const duration = formatDuration(song.durationSec);
-  const subtitle = song.artist ? `${song.artist} • ${duration}` : duration;
 
   return (
     <View style={styles.row}>
@@ -24,9 +23,16 @@ function SongRow({ song }: SongRowProps) {
         <Text style={styles.title} numberOfLines={1}>
           {song.title}
         </Text>
-        <Text style={styles.subtitle} numberOfLines={1}>
-          {subtitle}
-        </Text>
+        {/* Artist and duration are separate texts, so mixed Arabic/English artists cannot move the
+            duration into the middle, and the duration stays visible when the artist is cut off. */}
+        <View style={styles.subtitleRow}>
+          {song.artist !== null && (
+            <Text style={[styles.subtitle, styles.artist]} numberOfLines={1}>
+              {song.artist}
+            </Text>
+          )}
+          <Text style={styles.subtitle}>{song.artist !== null ? ` • ${duration}` : duration}</Text>
+        </View>
       </View>
       <IconButton
         icon={<Ellipsis color={colors.textSecondary} size={iconSizes.md} />}
@@ -54,6 +60,12 @@ const styles = StyleSheet.create({
   title: {
     ...typography.body,
     color: colors.text,
+  },
+  subtitleRow: {
+    flexDirection: 'row',
+  },
+  artist: {
+    flexShrink: 1,
   },
   subtitle: {
     ...typography.bodySmall,

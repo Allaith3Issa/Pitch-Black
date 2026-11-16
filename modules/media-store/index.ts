@@ -1,9 +1,6 @@
 import { NativeModule, requireNativeModule } from 'expo';
 
-/**
- * One audio file, as returned by Android's MediaStore.
- * (The Kotlin side still sends an extra `isMusic` field; it is ignored here and removed in Step 3.)
- */
+/** One audio file, as returned by Android's MediaStore. */
 export type MediaStoreAudioFile = {
   id: string;
   /** Playable content URI. */
@@ -20,10 +17,10 @@ export type MediaStoreAudioFile = {
 
 declare class MediaStoreModule extends NativeModule {
   /**
-   * Reads every audio file on the device.
+   * Reads every audio file on the device that is at least `minDurationMs` long.
    * Rejects with code `ERR_MISSING_AUDIO_PERMISSION` or `ERR_MEDIA_STORE_QUERY`.
    */
-  getAudioFilesAsync(): Promise<MediaStoreAudioFile[]>;
+  getAudioFilesAsync(minDurationMs: number): Promise<MediaStoreAudioFile[]>;
 }
 
 // Android only (this app does not support other platforms).

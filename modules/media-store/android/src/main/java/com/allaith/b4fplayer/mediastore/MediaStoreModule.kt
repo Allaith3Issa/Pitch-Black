@@ -8,6 +8,7 @@ import android.database.Cursor
 import android.os.Build
 import android.provider.MediaStore
 import expo.modules.kotlin.exception.CodedException
+import expo.modules.kotlin.exception.Exceptions
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
@@ -21,19 +22,19 @@ class MediaStoreQueryException(cause: Throwable?) :
 class MediaStoreModule : Module() {
   // The Android app context. It is needed to talk to MediaStore.
   private val context: Context
-    get() = appContext.reactContext ?: throw MediaStoreQueryException(null)
+    get() = appContext.reactContext ?: throw Exceptions.ReactContextLost()
 
   override fun definition() = ModuleDefinition {
     // JS loads this module with requireNativeModule('MediaStore').
     Name("MediaStore")
 
-    // Returns every audio file MediaStore knows about. Runs off the UI thread.
-    AsyncFunction("getAudioFilesAsync") {
+    // Returns every audio file that is at least `minDurationMs` long. Runs off the UI thread.
+    AsyncFunction("getAudioFilesAsync") { minDurationMs: Long ->
       if (!hasAudioPermission()) {
         throw MissingAudioPermissionException()
       }
       try {
-        queryAudioFiles()
+        queryAudioFiles(minDurationMs)
       } catch (error: SecurityException) {
         throw MissingAudioPermissionException()
       } catch (error: CodedException) {
@@ -54,7 +55,7 @@ class MediaStoreModule : Module() {
     return context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
   }
 
-  private fun queryAudioFiles(): List<Map<String, Any?>> {
+  private fun queryAudioFiles(minDurationMs: Long): List<Map<String, Any?>> {
     val collection = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 
     // The columns we want from MediaStore (like the SELECT part of an SQL query).
@@ -66,33 +67,45 @@ class MediaStoreModule : Module() {
       MediaStore.Audio.Media.ALBUM_ID,
       MediaStore.Audio.Media.DURATION,
       MediaStore.Audio.Media.DATE_ADDED,
-      MediaStore.Audio.Media.DISPLAY_NAME,
-      MediaStore.Audio.Media.IS_MUSIC
+      MediaStore.Audio.Media.DISPLAY_NAME
     )
 
-    val cursor = context.contentResolver.query(collection, columns, null, null, null)
+    // Like the WHERE part of an SQL query. The `?` is replaced by the value in `selectionArgs`.
+    val selection = "${MediaStore.Audio.Media.DURATION} >= ?"
+    val selectionArgs = arrayOf(minDurationMs.toString())
+
+    val cursor = context.contentResolver.query(collection, columns, selection, selectionArgs, null)
       ?: throw MediaStoreQueryException(null)
 
     // `use` closes the cursor at the end, even if something fails.
     return cursor.use { rows ->
+      // Find each column's position once, instead of once per row.
+      val idColumn = rows.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
+      val titleColumn = rows.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
+      val artistColumn = rows.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
+      val albumColumn = rows.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM)
+      val albumIdColumn = rows.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
+      val durationColumn = rows.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
+      val dateAddedColumn = rows.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_ADDED)
+      val filenameColumn = rows.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)
+
       val songs = ArrayList<Map<String, Any?>>(rows.count)
       while (rows.moveToNext()) {
-        val id = rows.getLong(rows.getColumnIndexOrThrow(MediaStore.Audio.Media._ID))
+        val id = rows.getLong(idColumn)
         songs.add(
           mapOf(
             "id" to id.toString(),
             // Playable address of the file, e.g. content://media/external/audio/media/123
             "uri" to ContentUris.withAppendedId(collection, id).toString(),
-            "title" to rows.stringOrNull(MediaStore.Audio.Media.TITLE),
-            "artist" to rows.stringOrNull(MediaStore.Audio.Media.ARTIST),
-            "album" to rows.stringOrNull(MediaStore.Audio.Media.ALBUM),
-            "albumId" to rows.longOrNull(MediaStore.Audio.Media.ALBUM_ID)?.toString(),
+            "title" to rows.stringOrNull(titleColumn),
+            "artist" to rows.stringOrNull(artistColumn),
+            "album" to rows.stringOrNull(albumColumn),
+            "albumId" to rows.longOrNull(albumIdColumn)?.toString(),
             // Already in milliseconds.
-            "durationMs" to (rows.longOrNull(MediaStore.Audio.Media.DURATION) ?: 0L).toDouble(),
+            "durationMs" to (rows.longOrNull(durationColumn) ?: 0L).toDouble(),
             // MediaStore stores seconds; JS uses milliseconds.
-            "dateAdded" to ((rows.longOrNull(MediaStore.Audio.Media.DATE_ADDED) ?: 0L) * 1000).toDouble(),
-            "filename" to (rows.stringOrNull(MediaStore.Audio.Media.DISPLAY_NAME) ?: ""),
-            "isMusic" to (rows.longOrNull(MediaStore.Audio.Media.IS_MUSIC) == 1L)
+            "dateAdded" to ((rows.longOrNull(dateAddedColumn) ?: 0L) * 1000).toDouble(),
+            "filename" to (rows.stringOrNull(filenameColumn) ?: "")
           )
         )
       }
@@ -101,13 +114,7 @@ class MediaStoreModule : Module() {
   }
 }
 
-// Small helpers: read a column, or null when the value is empty.
-private fun Cursor.stringOrNull(column: String): String? {
-  val index = getColumnIndexOrThrow(column)
-  return if (isNull(index)) null else getString(index)
-}
+// Small helpers: read the value at a column index, or null when it is empty.
+private fun Cursor.stringOrNull(index: Int): String? = if (isNull(index)) null else getString(index)
 
-private fun Cursor.longOrNull(column: String): Long? {
-  val index = getColumnIndexOrThrow(column)
-  return if (isNull(index)) null else getLong(index)
-}
+private fun Cursor.longOrNull(index: Int): Long? = if (isNull(index)) null else getLong(index)

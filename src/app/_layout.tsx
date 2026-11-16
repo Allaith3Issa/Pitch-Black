@@ -12,9 +12,10 @@ import * as SystemUI from 'expo-system-ui';
 import { useEffect } from 'react';
 
 import { useLibraryStartup } from '@/hooks/useLibraryStartup';
+import { useSettingsStore } from '@/store/settingsStore';
 import { colors } from '@/theme';
 
-// Keep the splash screen visible until the fonts and the first permission check are ready.
+// Keep the splash screen visible until the fonts, the saved settings and the first permission check are ready.
 SplashScreen.preventAutoHideAsync();
 
 // Black root view, so there is no white flash behind screens.
@@ -42,10 +43,12 @@ export default function RootLayout() {
   });
 
   const { isPermissionChecked, canEnterApp } = useLibraryStartup();
+  // Wait for the saved sort, so the list does not show A–Z first and then jump.
+  const isSettingsReady = useSettingsStore((state) => state.isHydrated);
 
   // If the fonts fail to load we still open the app (with the system font) instead of hanging.
   const fontsReady = fontsLoaded || fontError !== null;
-  const isReady = fontsReady && isPermissionChecked;
+  const isReady = fontsReady && isPermissionChecked && isSettingsReady;
 
   useEffect(() => {
     if (isReady) {

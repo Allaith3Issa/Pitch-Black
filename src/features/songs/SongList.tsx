@@ -1,24 +1,16 @@
-import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import Button from '@/components/Button';
-import SongRow from '@/components/SongRow';
+import SongFlatList from '@/components/SongFlatList';
 import StateMessage from '@/components/StateMessage';
 import { useAllowAccess } from '@/hooks/useAllowAccess';
+import { useSortedSongs } from '@/hooks/useSortedSongs';
 import { useLibraryStore } from '@/store/libraryStore';
-import { colors, sizes, spacing } from '@/theme';
-import type { Song } from '@/types/song';
+import { colors } from '@/theme';
 
-const keyExtractor = (song: Song) => song.id;
-const renderItem = ({ item }: { item: Song }) => <SongRow song={item} />;
-const getItemLayout = (_: ArrayLike<Song> | null | undefined, index: number) => ({
-  length: sizes.songRow,
-  offset: sizes.songRow * index,
-  index,
-});
-
-/** The song list with its loading / error / empty / no-access states. */
+/** The sorted song list with its loading / error / empty / no-access states. */
 export default function SongList() {
-  const songs = useLibraryStore((state) => state.songs);
+  const songs = useSortedSongs();
   const status = useLibraryStore((state) => state.status);
   const error = useLibraryStore((state) => state.error);
   const permission = useLibraryStore((state) => state.permission);
@@ -60,15 +52,7 @@ export default function SongList() {
     return <StateMessage title="No songs found" description="Add audio files to your phone and try again." />;
   }
 
-  return (
-    <FlatList
-      data={songs}
-      keyExtractor={keyExtractor}
-      renderItem={renderItem}
-      getItemLayout={getItemLayout}
-      contentContainerStyle={styles.content}
-    />
-  );
+  return <SongFlatList songs={songs} />;
 }
 
 const styles = StyleSheet.create({
@@ -76,9 +60,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  content: {
-    // Breathing room under the last row, above the tab bar.
-    paddingBottom: spacing.xl,
   },
 });

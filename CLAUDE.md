@@ -94,7 +94,7 @@ Put new files in the right folder. Do not create new top-level folders without a
 
 When the step is done, in this order:
 
-1. Run `npx tsc --noEmit` and `npx expo lint` — fix every error.
+1. Run `npx tsc --noEmit`, `npx expo lint` and `npm test` — fix every error and failing test.
 2. Run the `step-reviewer` subagent (`.claude/agents/step-reviewer.md`) and fix every ❌ item it reports.
    Mention its ⚠️ items in the summary.
 3. Write a summary (in English) with:

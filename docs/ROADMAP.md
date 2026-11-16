@@ -58,10 +58,15 @@ Android's MediaStore has them, but reading them needs native code, which Expo Go
 real titles and artists from MediaStore tags.
 
 ## Step 3 — Sorting & search
-- [ ] Sort by **Name** or **Date added**, order **Ascending** or **Descending** (Sort sheet — screen 03)
-- [ ] Sort chip on the Songs screen shows the current choice (e.g. "Name · A–Z")
-- [ ] Sort choice saved (persists after app restart)
-- [ ] Search screen (screen 05) — filter by title and artist, live as you type, results count
+- [x] Sort by **Name** or **Date added**, order **Ascending** or **Descending** (Sort sheet — screen 03)
+- [x] Sort chip on the Songs screen shows the current choice (e.g. "Name · A–Z")
+- [x] Sort choice saved (persists after app restart)
+- [x] Search screen (screen 05) — filter by title (Arabic-aware: hamza, ة/ه, ى/ي, tashkeel; Latin accents),
+      live as you type, results count
+- [x] SongRow subtitle: artist and "• 3:45" as separate texts (mixed Arabic/English artists kept the duration
+      in the middle); the duration always stays visible
+- [x] Titles that repeat the artist ("Artist - Title") show only the title (`stripArtistPrefix`)
+- [x] Unit tests (jest-expo) for the pure utils; `npm test` added to "Finishing a step"
 
 > **From the full review:** also apply the Kotlin fixes in `modules/media-store` — look up the column indexes once
 > before the loop, use `Exceptions.ReactContextLost()`, filter `DURATION >= 30000` natively, and remove the
@@ -69,6 +74,8 @@ real titles and artists from MediaStore tags.
 > dev build anyway (AsyncStorage), so we build only once.
 
 **Done when:** sorting and search work and the sort choice survives a restart.
+✅ Verified on device: all 4 sort combinations, sort choice survives a restart, Arabic-aware title search,
+still 641 songs with the native 30 s filter.
 
 ## Step 4 — Playback engine
 - [ ] `services/audio` wrapper around `expo-audio`

@@ -8,6 +8,7 @@ import {
 import type { AudioPermission } from '@/types/permission';
 import type { Song } from '@/types/song';
 import { parseSongFilename } from '@/utils/parseSongFilename';
+import { stripArtistPrefix } from '@/utils/stripArtistPrefix';
 import MediaStore, { type MediaStoreAudioFile } from '@modules/media-store';
 
 // Everything that reads the device's music lives in this file.
@@ -54,12 +55,15 @@ function toSong(file: MediaStoreAudioFile): Song {
   // Without an artist tag, MediaStore's title is usually just the filename,
   // so "Artist - Title.mp3" is better split by parseSongFilename.
   const useFilename = tagArtist === null && fromFilename.artist !== null;
+  const title = (useFilename ? fromFilename.title : (tagTitle ?? fromFilename.title)) || UNKNOWN_TITLE;
+  const artist = tagArtist ?? fromFilename.artist;
 
   return {
     id: file.id,
     uri: file.uri,
-    title: (useFilename ? fromFilename.title : (tagTitle ?? fromFilename.title)) || UNKNOWN_TITLE,
-    artist: tagArtist ?? fromFilename.artist,
+    // Some title tags repeat the artist ("Artist - Title"): keep only the title.
+    title: stripArtistPrefix(title, artist),
+    artist,
     album: cleanTag(file.album),
     albumId: file.albumId,
     durationSec: file.durationMs / 1000,
@@ -68,8 +72,9 @@ function toSong(file: MediaStoreAudioFile): Song {
   };
 }
 
-/** Reads every audio file on the device and keeps only real songs (at least MIN_SONG_DURATION_SEC long). */
+/** Reads the real songs on the device (at least MIN_SONG_DURATION_SEC long). */
 export async function loadAllSongs(): Promise<Song[]> {
-  const files = await MediaStore.getAudioFilesAsync();
-  return files.map(toSong).filter((song) => song.durationSec >= MIN_SONG_DURATION_SEC);
+  // MediaStore already skips shorter files, so they are never sent to JS.
+  const files = await MediaStore.getAudioFilesAsync(MIN_SONG_DURATION_SEC * 1000);
+  return files.map(toSong);
 }
