@@ -4,15 +4,13 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import Artwork from '@/components/Artwork';
 import IconButton from '@/components/IconButton';
-import { colors, iconSizes, screenPadding, spacing, typography } from '@/theme';
+import { colors, iconSizes, screenPadding, sizes, spacing, typography } from '@/theme';
 import type { Song } from '@/types/song';
 import { formatDuration } from '@/utils/formatDuration';
 
 type SongRowProps = {
   song: Song;
 };
-
-export const SONG_ROW_HEIGHT = 64;
 
 // Default state only. The "Playing" state comes in Step 4; the "⋯" button gets its action in Step 7.
 function SongRow({ song }: SongRowProps) {
@@ -21,7 +19,7 @@ function SongRow({ song }: SongRowProps) {
 
   return (
     <View style={styles.row}>
-      <Artwork size={48} />
+      <Artwork size={sizes.artworkRow} />
       <View style={styles.texts}>
         <Text style={styles.title} numberOfLines={1}>
           {song.title}
@@ -42,7 +40,7 @@ export default memo(SongRow);
 
 const styles = StyleSheet.create({
   row: {
-    height: SONG_ROW_HEIGHT,
+    height: sizes.songRow,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,

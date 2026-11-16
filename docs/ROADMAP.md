@@ -44,21 +44,29 @@ Android's MediaStore has them, but reading them needs native code, which Expo Go
       ✅ Verified on device (2B-1): permission dialog works, "Don't allow" stays on the permission screen,
       641 songs listed, durations correct (MediaStore duration is in ms), no audio under 30 s,
       "Artist - Title" filename split works (other files show no artist).
-- [ ] Native data source from MediaStore: prefer a small local Expo module (Kotlin) in modules/,
+- [x] Native data source from MediaStore: prefer a small local Expo module (Kotlin) in modules/,
       unless a well-maintained library fits better — compare and ask me
       Fields: id, uri, title, artist, album, albumId, durationMs, dateAdded, filename
-- [ ] Keep the MIN_SONG_DURATION_SEC filter
-- [ ] services/mediaLibrary.ts uses the new source; keep expo-media-library only if needed for permission
-- [ ] parseSongFilename stays as a fallback when tags are empty or "<unknown>"
-- [ ] Album art: if simple, return an artwork URI with each song; otherwise leave it for Step 6
+- [x] Keep the MIN_SONG_DURATION_SEC filter
+- [x] services/mediaLibrary.ts uses the new source; keep expo-media-library only if needed for permission
+- [x] parseSongFilename stays as a fallback when tags are empty or "<unknown>"
+- [x] Album art: if simple, return an artwork URI with each song; otherwise leave it for Step 6
+      → Left for Step 6 (needs cached thumbnails per album). `albumId` is already returned.
 
 **Done when:** the dev build runs on my phone and songs show their real title, artist and date added.
+✅ Verified on device (2B-2): 682 audio files, 641 songs ≥ 30 s (same with IS_MUSIC, so that filter is not used),
+real titles and artists from MediaStore tags.
 
 ## Step 3 — Sorting & search
 - [ ] Sort by **Name** or **Date added**, order **Ascending** or **Descending** (Sort sheet — screen 03)
 - [ ] Sort chip on the Songs screen shows the current choice (e.g. "Name · A–Z")
 - [ ] Sort choice saved (persists after app restart)
 - [ ] Search screen (screen 05) — filter by title and artist, live as you type, results count
+
+> **From the full review:** also apply the Kotlin fixes in `modules/media-store` — look up the column indexes once
+> before the loop, use `Exceptions.ReactContextLost()`, filter `DURATION >= 30000` natively, and remove the
+> `IS_MUSIC` column and `isMusic` field (the filter changed nothing: 641 = 641; JS already ignores it). Step 3 needs a new
+> dev build anyway (AsyncStorage), so we build only once.
 
 **Done when:** sorting and search work and the sort choice survives a restart.
 
@@ -70,6 +78,9 @@ Android's MediaStore has them, but reading them needs native code, which Expo Go
 - [ ] "Play" button plays the list from the start
 - [ ] Auto-play the next song when one ends
 - [ ] Playing row is highlighted (`SongRow` State=Playing)
+
+> **From the full review:** check early that `expo-audio` plays the `content://` URIs from MediaStore.
+> The queue holds song **ids**, not copies of songs.
 
 **Done when:** songs play, pause, skip and continue automatically while the app is open.
 
@@ -100,6 +111,10 @@ Android's MediaStore has them, but reading them needs native code, which Expo Go
 - [ ] `playlistStore` + favorites saved with `persist` (survive restart)
 - [ ] If a saved song no longer exists on the device, skip it safely
 
+> **From the full review:** MediaStore ids are not stable (they change when a file is re-added, after a phone
+> migration...). Store a fallback key (filename + duration) next to each id and re-match on load.
+> Favorites, playlists and settings live in separate small persisted stores that hold ids only.
+
 **Done when:** playlists and favorites work and survive an app restart.
 
 ## Step 8 — Settings
@@ -108,6 +123,8 @@ Android's MediaStore has them, but reading them needs native code, which Expo Go
 - [ ] Default sort (opens the Sort sheet)
 - [ ] Resume last song on start (toggle, saved)
 - [ ] About: app name + version from `app.json`
+
+> **From the full review:** rescan needs a separate `isRefreshing` flag — don't replace the list with a spinner.
 
 ## Step 9 — Background playback
 The development build already exists (Step 2B). This step needs a new dev build because of the config plugin change.
@@ -120,3 +137,6 @@ The development build already exists (Step 2B). This step needs a new dev build 
 - [ ] Clean up code, final lint/typecheck
 - [ ] README: screenshots, features, tech stack, how to run
 - [ ] Build the final APK
+
+> **From the full review:** remove the iOS/web config from `app.json`; add `preview` and `production`
+> profiles to `eas.json`.

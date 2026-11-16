@@ -1,9 +1,7 @@
 import type { BottomTabBarProps } from 'expo-router/js-tabs';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colors, fonts, radius, spacing, typography } from '@/theme';
-
-const ICON_SIZE = 22;
+import { colors, fonts, iconSizes, radius, sizes, spacing, typography } from '@/theme';
 
 // Floating tab bar from DESIGN.md. Icons and labels come from each screen's options.
 export default function TabBar({ state, descriptors, emitter, navigateToTab, insets }: BottomTabBarProps) {
@@ -33,7 +31,7 @@ export default function TabBar({ state, descriptors, emitter, navigateToTab, ins
               accessibilityLabel={label}
             >
               <View style={[styles.iconPill, focused && styles.iconPillActive]}>
-                {options.tabBarIcon?.({ focused, color, size: ICON_SIZE })}
+                {options.tabBarIcon?.({ focused, color, size: iconSizes.tab })}
               </View>
               <Text style={[styles.label, focused && styles.labelActive, { color }]}>{label}</Text>
             </Pressable>
@@ -51,7 +49,7 @@ const styles = StyleSheet.create({
   },
   bar: {
     flexDirection: 'row',
-    height: 64,
+    height: sizes.tabBar,
     backgroundColor: colors.surface,
     borderRadius: radius.tabBar,
     borderWidth: 1,
@@ -64,8 +62,8 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   iconPill: {
-    width: 56,
-    height: 30,
+    width: sizes.tabPillWidth,
+    height: sizes.tabPillHeight,
     borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',

@@ -1,18 +1,18 @@
 import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 
 import Button from '@/components/Button';
-import SongRow, { SONG_ROW_HEIGHT } from '@/components/SongRow';
+import SongRow from '@/components/SongRow';
 import StateMessage from '@/components/StateMessage';
 import { useAllowAccess } from '@/hooks/useAllowAccess';
 import { useLibraryStore } from '@/store/libraryStore';
-import { colors, spacing } from '@/theme';
+import { colors, sizes, spacing } from '@/theme';
 import type { Song } from '@/types/song';
 
 const keyExtractor = (song: Song) => song.id;
 const renderItem = ({ item }: { item: Song }) => <SongRow song={item} />;
 const getItemLayout = (_: ArrayLike<Song> | null | undefined, index: number) => ({
-  length: SONG_ROW_HEIGHT,
-  offset: SONG_ROW_HEIGHT * index,
+  length: sizes.songRow,
+  offset: sizes.songRow * index,
   index,
 });
 
@@ -30,7 +30,8 @@ export default function SongList() {
     return (
       <StateMessage
         title="No access to your music"
-        description={permissionError ?? 'Allow B4F Player to read the audio files on your device.'}
+        description={permissionError?.message ?? 'Allow B4F Player to read the audio files on your device.'}
+        detail={permissionError?.detail}
         action={<Button label={allowAccess.label} onPress={allowAccess.onPress} />}
       />
     );
@@ -48,7 +49,8 @@ export default function SongList() {
     return (
       <StateMessage
         title="Something went wrong"
-        description={error ?? undefined}
+        description={error?.message}
+        detail={error?.detail}
         action={<Button label="Try again" onPress={loadSongs} />}
       />
     );

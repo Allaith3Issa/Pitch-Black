@@ -25,7 +25,12 @@ export default function PermissionView() {
         B4F Player needs permission to read the audio files on your device so you can play them offline.
       </Text>
 
-      {permissionError ? <Text style={styles.error}>{permissionError}</Text> : null}
+      {permissionError ? (
+        <View style={styles.errorBox}>
+          <Text style={styles.error}>{permissionError.message}</Text>
+          {permissionError.detail ? <Text style={styles.errorDetail}>{permissionError.detail}</Text> : null}
+        </View>
+      ) : null}
 
       <Button
         label={allowAccess.label}
@@ -78,11 +83,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: spacing.xxl,
   },
+  errorBox: {
+    gap: spacing.xs,
+    marginBottom: spacing.lg,
+  },
   error: {
     ...typography.bodySmall,
     color: colors.text,
     textAlign: 'center',
-    marginBottom: spacing.lg,
+  },
+  errorDetail: {
+    ...typography.caption,
+    color: colors.textTertiary,
+    textAlign: 'center',
   },
   allowButton: {
     alignSelf: 'stretch',
