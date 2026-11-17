@@ -39,3 +39,6 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Files from Claude chat (not part of the app)
+Claude outputs/
