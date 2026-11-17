@@ -1,6 +1,7 @@
 import { Heart, HeartOff, ListMinus, ListPlus } from 'lucide-react-native';
 import { Text, ToastAndroid, View } from 'react-native';
 
+import AppText from '@/components/AppText';
 import Artwork from '@/components/Artwork';
 import SheetOption from '@/components/SheetOption';
 import { useIsFavorite } from '@/hooks/useIsFavorite';
@@ -44,15 +45,15 @@ export default function SongOptionsView({ song, playlistId, onAddToPlaylist, onC
       <View style={styles.header}>
         <Artwork size={sizes.artworkRow} />
         <View style={styles.texts}>
-          <Text style={styles.title} numberOfLines={1}>
+          <AppText style={styles.title} numberOfLines={1}>
             {song.title}
-          </Text>
+          </AppText>
           {/* Separate texts, so a mixed Arabic/English artist cannot move the duration (same as SongRow). */}
           <View style={styles.subtitleRow}>
             {song.artist !== null && (
-              <Text style={[styles.subtitle, styles.shrink]} numberOfLines={1}>
+              <AppText style={[styles.subtitle, styles.shrink]} numberOfLines={1}>
                 {song.artist}
-              </Text>
+              </AppText>
             )}
             <Text style={styles.subtitle}>{song.artist !== null ? ` • ${duration}` : duration}</Text>
           </View>

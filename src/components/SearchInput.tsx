@@ -4,6 +4,7 @@ import { Pressable, TextInput, View } from 'react-native';
 
 import { useTheme } from '@/hooks/useTheme';
 import { iconSizes, makeStyles, radius, sizes, spacing, typography } from '@/theme';
+import { withArabicFont } from '@/theme/withArabicFont';
 
 type SearchInputProps = {
   value: string;
@@ -22,7 +23,7 @@ export default function SearchInput({ value, onChangeText, placeholder, autoFocu
     <View style={[styles.container, isFocused && styles.focused]}>
       <Search color={colors.textSecondary} size={iconSizes.sm} />
       <TextInput
-        style={styles.input}
+        style={withArabicFont(value, styles.input)}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
-import { KeyboardAvoidingView, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Pressable, StyleSheet, View } from 'react-native';
 
+import AppText from '@/components/AppText';
 import { makeStyles, radius, sizes, spacing, typography } from '@/theme';
 
 type DialogProps = {
@@ -21,7 +22,7 @@ export default function Dialog({ visible, onClose, title, children }: DialogProp
       <KeyboardAvoidingView style={styles.center} behavior="height">
         <Pressable style={[StyleSheet.absoluteFill, styles.scrim]} onPress={onClose} accessibilityLabel="Close" />
         <View style={styles.card} accessibilityViewIsModal>
-          <Text style={styles.title}>{title}</Text>
+          <AppText style={styles.title}>{title}</AppText>
           {children}
         </View>
       </KeyboardAvoidingView>

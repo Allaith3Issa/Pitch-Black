@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
+import AppText from '@/components/AppText';
 import Artwork from '@/components/Artwork';
 import Checkbox from '@/components/Checkbox';
 import { makeStyles, opacity, screenPadding, sizes, spacing, typography } from '@/theme';
@@ -31,15 +32,15 @@ function SelectableSongRow({ song, checked, disabled, onPress }: SelectableSongR
     >
       <Artwork size={sizes.artworkRow} />
       <View style={[styles.texts, disabled && styles.dimmed]}>
-        <Text style={styles.title} numberOfLines={1}>
+        <AppText style={styles.title} numberOfLines={1}>
           {song.title}
-        </Text>
+        </AppText>
         {/* Separate texts, so a mixed Arabic/English artist cannot move the duration (same as SongRow). */}
         <View style={styles.subtitleRow}>
           {song.artist !== null && (
-            <Text style={[styles.subtitle, styles.artist]} numberOfLines={1}>
+            <AppText style={[styles.subtitle, styles.artist]} numberOfLines={1}>
               {song.artist}
-            </Text>
+            </AppText>
           )}
           <Text style={styles.subtitle}>{song.artist !== null ? ` • ${duration}` : duration}</Text>
         </View>

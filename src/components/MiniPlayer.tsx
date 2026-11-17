@@ -1,6 +1,7 @@
 import { Pause, Play, SkipForward } from 'lucide-react-native';
-import { Animated, Pressable, Text, View } from 'react-native';
+import { Animated, Pressable, View } from 'react-native';
 
+import AppText from '@/components/AppText';
 import Artwork from '@/components/Artwork';
 import FavoriteButton from '@/components/FavoriteButton';
 import IconButton from '@/components/IconButton';
@@ -38,13 +39,13 @@ export default function MiniPlayer() {
         >
           <Artwork size={sizes.artworkMini} />
           <View style={styles.texts}>
-            <Text style={styles.title} numberOfLines={1}>
+            <AppText style={styles.title} numberOfLines={1}>
               {song.title}
-            </Text>
+            </AppText>
             {song.artist !== null && (
-              <Text style={styles.artist} numberOfLines={1}>
+              <AppText style={styles.artist} numberOfLines={1}>
                 {song.artist}
-              </Text>
+              </AppText>
             )}
           </View>
         </Pressable>

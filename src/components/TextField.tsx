@@ -3,6 +3,7 @@ import { Text, TextInput, View } from 'react-native';
 
 import { useTheme } from '@/hooks/useTheme';
 import { makeStyles, radius, sizes, spacing, typography } from '@/theme';
+import { withArabicFont } from '@/theme/withArabicFont';
 
 type TextFieldProps = {
   value: string;
@@ -34,7 +35,7 @@ export default function TextField({
   return (
     <View style={styles.wrap}>
       <TextInput
-        style={[styles.input, isFocused && styles.focused]}
+        style={withArabicFont(value, [styles.input, isFocused && styles.focused])}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}

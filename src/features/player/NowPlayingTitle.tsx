@@ -1,5 +1,6 @@
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
+import AppText from '@/components/AppText';
 import FavoriteButton from '@/components/FavoriteButton';
 import { fonts, makeStyles, spacing, typography } from '@/theme';
 import type { Song } from '@/types/song';
@@ -15,12 +16,12 @@ export default function NowPlayingTitle({ song }: NowPlayingTitleProps) {
   return (
     <View style={styles.row}>
       <View style={styles.texts}>
-        <Text style={styles.title} numberOfLines={1}>
+        <AppText style={styles.title} numberOfLines={1}>
           {song.title}
-        </Text>
-        <Text style={styles.artist} numberOfLines={1}>
+        </AppText>
+        <AppText style={styles.artist} numberOfLines={1}>
           {song.artist ?? 'Unknown artist'}
-        </Text>
+        </AppText>
       </View>
       <FavoriteButton song={song} />
     </View>

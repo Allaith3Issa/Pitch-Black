@@ -1,6 +1,7 @@
 import { ChevronDown, Ellipsis } from 'lucide-react-native';
 import { Text, View } from 'react-native';
 
+import AppText from '@/components/AppText';
 import IconButton from '@/components/IconButton';
 import { useTheme } from '@/hooks/useTheme';
 import { fonts, iconSizes, letterSpacing, makeStyles, sizes, spacing, typography } from '@/theme';
@@ -25,9 +26,9 @@ export default function NowPlayingHeader({ queueTitle, onClose }: NowPlayingHead
       />
       <View style={styles.source}>
         <Text style={styles.label}>NOW PLAYING</Text>
-        <Text style={styles.queueTitle} numberOfLines={1}>
+        <AppText style={styles.queueTitle} numberOfLines={1}>
           {queueTitle}
-        </Text>
+        </AppText>
       </View>
       {/* The song menu (info, share) gets its action in Step 6. */}
       <IconButton icon={<Ellipsis color={colors.text} size={iconSizes.md} />} accessibilityLabel="More options" />

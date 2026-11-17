@@ -1,7 +1,7 @@
 import { Pencil, Trash2 } from 'lucide-react-native';
 import { useState } from 'react';
-import { Text } from 'react-native';
 
+import AppText from '@/components/AppText';
 import BottomSheet from '@/components/BottomSheet';
 import PlaylistNameDialog from '@/components/PlaylistNameDialog';
 import SheetOption from '@/components/SheetOption';
@@ -50,9 +50,9 @@ export default function PlaylistOptionsSheet({ playlist, onClose, onDeleted }: P
   return (
     <>
       <BottomSheet visible={playlist !== null} onClose={onClose}>
-        <Text style={styles.title} numberOfLines={1}>
+        <AppText style={styles.title} numberOfLines={1}>
           {shown?.name}
-        </Text>
+        </AppText>
         <SheetOption label="Rename" icon={Pencil} onPress={() => openDialog('rename')} />
         <SheetOption label="Delete playlist" icon={Trash2} onPress={() => openDialog('delete')} />
       </BottomSheet>

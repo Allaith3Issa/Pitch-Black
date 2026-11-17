@@ -6,7 +6,7 @@ then with the **development build** (from Step 2B on).
 
 Status: `[ ]` not started · `[x]` done
 
-**Order from Step 4B on:** 4B → 4C → 5 → 7 → 8 → 6 → (one new dev build) → 9 → 10.
+**Order from Step 4B on:** 4B → 4C → 5 → 7 → 8 → 8B → 6 → (one new dev build) → 9 → 10.
 **Until Step 6: no new native packages.** All native work is collected in Step 6. If a step seems to need a
 native package, stop and ask Allaith first. What to test after that build: see "Next build checklist" at the end.
 
@@ -208,6 +208,19 @@ Shuffle button works as a toggle.
 
 > **From the full review:** rescan needs a separate `isRefreshing` flag — don't replace the list with a spinner.
 
+## Step 8B — Arabic font
+JS only (the font package adds font files and JS, no new build).
+- [x] IBM Plex Sans Arabic (Regular, Medium, Semi Bold, Bold) with `@expo-google-fonts/ibm-plex-sans-arabic`,
+      loaded with Inter before the splash screen hides
+- [x] Pure helper `hasArabic` (tests)
+- [x] Text with Arabic uses Plex Arabic in the same weight (`AppText`, `withArabicFont` for inputs); all other text
+      stays Inter. Song titles, artists, playlist names, Mini Player, Now Playing, search, sheets, dialogs
+- [x] Bidi-safe layout kept (artist, duration and play count stay separate texts); Arabic line height 1.4 × size
+      with `includeFontPadding: false`
+
+**Done when (on the CURRENT build):** Arabic titles, artists and playlist names use Plex Arabic in the right weight,
+no marks are cut off, the artist stays aligned with " • 3:45", Latin text looks unchanged.
+
 ## Step 6 — Covers, song info, share, navigation bar (all native work)
 Step 6 collects **all** native work, so there is only one new dev build (after this step).
 - [ ] Cover from the audio file itself first (embedded artwork), cached in the app
@@ -275,5 +288,4 @@ Not planned for now.
 - Music recognition (AcoustID) to fill in missing titles / artists
 - Alphabet scroller on the song list (jump to a letter)
 - "Up next" queue view
-- Arabic font (Inter has no Arabic letters)
 - Search inside Favorites (the search icon on the Favorites tab)

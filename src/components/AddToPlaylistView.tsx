@@ -2,6 +2,7 @@ import { Plus } from 'lucide-react-native';
 import { useState } from 'react';
 import { FlatList, type ListRenderItem, Text, useWindowDimensions, View } from 'react-native';
 
+import AppText from '@/components/AppText';
 import Checkbox from '@/components/Checkbox';
 import PlaylistCover from '@/components/PlaylistCover';
 import PlaylistNameDialog from '@/components/PlaylistNameDialog';
@@ -69,13 +70,13 @@ export default function AddToPlaylistView({ song }: AddToPlaylistViewProps) {
         <Text style={styles.title}>Add to playlist</Text>
         {/* Separate texts, so mixed Arabic/English titles and artists stay in place. */}
         <View style={styles.subtitleRow}>
-          <Text style={[styles.subtitle, styles.shrink]} numberOfLines={1}>
+          <AppText style={[styles.subtitle, styles.shrink]} numberOfLines={1}>
             {song.title}
-          </Text>
+          </AppText>
           {song.artist !== null && (
-            <Text style={[styles.subtitle, styles.shrink]} numberOfLines={1}>
+            <AppText style={[styles.subtitle, styles.shrink]} numberOfLines={1}>
               {` • ${song.artist}`}
-            </Text>
+            </AppText>
           )}
         </View>
       </View>

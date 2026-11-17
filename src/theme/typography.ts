@@ -29,6 +29,40 @@ export const typography = {
   iconLabel: { fontFamily: fonts.bold, fontSize: 8 },
 } as const satisfies Record<string, TypographyToken>;
 
+/*
+ * Arabic text (titles, artists, playlist names) uses IBM Plex Sans Arabic in the same weight, because
+ * Inter has no Arabic letters. See components/AppText.
+ */
+const arabicFonts: Record<string, string> = {
+  [fonts.regular]: 'IBMPlexSansArabic_400Regular',
+  [fonts.medium]: 'IBMPlexSansArabic_500Medium',
+  [fonts.semiBold]: 'IBMPlexSansArabic_600SemiBold',
+  [fonts.bold]: 'IBMPlexSansArabic_700Bold',
+};
+
+/**
+ * Arabic needs more height than Latin (marks above and below the letters). 1.4 × the font size keeps
+ * the tanween marks and letters like ق ي ج from being cut off. Rows have fixed heights, so they do not grow.
+ */
+export const ARABIC_LINE_HEIGHT_RATIO = 1.4;
+
+/** Font size used when a style sets none (React Native's default). */
+const DEFAULT_FONT_SIZE = 14;
+
+export type ArabicTextStyle = Pick<TextStyle, 'fontFamily' | 'lineHeight' | 'includeFontPadding'>;
+
+/**
+ * The style to add to a text that contains Arabic: the Arabic font in the same weight as `fontFamily`
+ * (Regular when it is not one of ours), a taller line, and no extra Android font padding.
+ */
+export function getArabicTextStyle(fontFamily: string | undefined, fontSize: number | undefined): ArabicTextStyle {
+  return {
+    fontFamily: arabicFonts[fontFamily ?? fonts.regular] ?? arabicFonts[fonts.regular],
+    lineHeight: Math.round((fontSize ?? DEFAULT_FONT_SIZE) * ARABIC_LINE_HEIGHT_RATIO),
+    includeFontPadding: false,
+  };
+}
+
 // Section labels (SORT BY, LIBRARY...) are uppercase with ~10% letter spacing: 12 × 0.1 = 1.2.
 export const letterSpacing = {
   label: 1.2,

@@ -2,6 +2,7 @@ import { ChartNoAxesColumn, Ellipsis } from 'lucide-react-native';
 import { memo } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
+import AppText from '@/components/AppText';
 import Artwork from '@/components/Artwork';
 import IconButton from '@/components/IconButton';
 import PlayCount from '@/components/PlayCount';
@@ -34,16 +35,16 @@ function SongRow({ song, index, isCurrent, onPress, onMore }: SongRowProps) {
     >
       <Artwork size={sizes.artworkRow} />
       <View style={styles.texts}>
-        <Text style={[styles.title, isCurrent && styles.titleCurrent]} numberOfLines={1}>
+        <AppText style={[styles.title, isCurrent && styles.titleCurrent]} numberOfLines={1}>
           {song.title}
-        </Text>
+        </AppText>
         {/* Artist, duration and play count are separate texts, so mixed Arabic/English artists cannot
             move them into the middle, and they stay visible when the artist is cut off. */}
         <View style={styles.subtitleRow}>
           {song.artist !== null && (
-            <Text style={[styles.subtitle, styles.artist]} numberOfLines={1}>
+            <AppText style={[styles.subtitle, styles.artist]} numberOfLines={1}>
               {song.artist}
-            </Text>
+            </AppText>
           )}
           <Text style={styles.subtitle}>{song.artist !== null ? ` • ${duration}` : duration}</Text>
           <PlayCount songId={song.id} />

@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { Plus } from 'lucide-react-native';
 import { Text, View } from 'react-native';
 
+import AppText from '@/components/AppText';
 import PlaylistCover from '@/components/PlaylistCover';
 import PlaylistRow from '@/components/PlaylistRow';
 import SongActions from '@/components/SongActions';
@@ -31,9 +32,9 @@ export default function PlaylistHero({ playlist, songs, missingCount, queueSourc
         <PlaylistCover size={sizes.playlistCoverHero} iconSize={iconSizes.playlistHero} borderRadius={radius.lg} />
         <View style={styles.info}>
           <Text style={styles.label}>PLAYLIST</Text>
-          <Text style={styles.name} numberOfLines={2}>
+          <AppText style={styles.name} numberOfLines={2}>
             {playlist.name}
-          </Text>
+          </AppText>
           <Text style={styles.summary}>{getPlaylistSummary(songs)}</Text>
         </View>
       </View>

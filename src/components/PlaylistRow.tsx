@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { type AccessibilityState, Pressable, Text, View } from 'react-native';
 
+import AppText from '@/components/AppText';
 import { makeStyles, opacity, screenPadding, spacing, typography } from '@/theme';
 
 type PlaylistRowProps = {
@@ -39,9 +40,9 @@ export default function PlaylistRow({
     >
       {cover}
       <View style={styles.texts}>
-        <Text style={styles.title} numberOfLines={1}>
+        <AppText style={styles.title} numberOfLines={1}>
           {title}
-        </Text>
+        </AppText>
         {subtitle !== undefined && (
           <Text style={styles.subtitle} numberOfLines={1}>
             {subtitle}

@@ -1,4 +1,10 @@
 import {
+  IBMPlexSansArabic_400Regular,
+  IBMPlexSansArabic_500Medium,
+  IBMPlexSansArabic_600SemiBold,
+  IBMPlexSansArabic_700Bold,
+} from '@expo-google-fonts/ibm-plex-sans-arabic';
+import {
   Inter_400Regular,
   Inter_500Medium,
   Inter_600SemiBold,
@@ -37,6 +43,11 @@ export default function RootLayout() {
     Inter_500Medium,
     Inter_600SemiBold,
     Inter_700Bold,
+    // Inter has no Arabic letters: Arabic titles and artists use this font (see components/AppText).
+    IBMPlexSansArabic_400Regular,
+    IBMPlexSansArabic_500Medium,
+    IBMPlexSansArabic_600SemiBold,
+    IBMPlexSansArabic_700Bold,
   });
 
   const { isPermissionChecked, canEnterApp } = useLibraryStartup();

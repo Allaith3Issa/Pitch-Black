@@ -3,6 +3,7 @@ import { X } from 'lucide-react-native';
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, type ListRenderItem, Text, ToastAndroid, View } from 'react-native';
 
+import AppText from '@/components/AppText';
 import Button from '@/components/Button';
 import IconButton from '@/components/IconButton';
 import SearchInput from '@/components/SearchInput';
@@ -107,9 +108,9 @@ export default function AddSongsList({ playlistId }: AddSongsListProps) {
         <IconButton icon={<X color={colors.text} size={iconSizes.md} />} accessibilityLabel="Close" onPress={close} />
         <View style={styles.titles}>
           <Text style={styles.title}>Add songs</Text>
-          <Text style={styles.subtitle} numberOfLines={1}>
+          <AppText style={styles.subtitle} numberOfLines={1}>
             to {playlist.name}
-          </Text>
+          </AppText>
         </View>
         <Button label={`Add (${selected.size})`} onPress={add} disabled={selected.size === 0} />
       </View>

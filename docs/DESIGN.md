@@ -7,7 +7,7 @@ If this file and Figma disagree, Figma wins. If you have Figma access (MCP), rea
 - Themes: **OLED** (default: pure black background, white text), **Light**, or **System** (follows the phone);
   6 accent colors, **purple** by default. See "Color tokens" below.
 - Device frame: 360 × 800 (Android). Use flex layouts — never hardcode screen sizes.
-- Font: **Inter** (Regular 400, Medium 500, Semi Bold 600, Bold 700)
+- Font: **Inter** (Regular 400, Medium 500, Semi Bold 600, Bold 700); Arabic text: **IBM Plex Sans Arabic** in the same weights
 - Icons: lucide style, 2px stroke, rounded caps → `lucide-react-native`
 
 ---
@@ -91,6 +91,13 @@ Background / letter, per theme.
 | `iconLabel` | 8 | Bold | Number inside the skip back / forward icons ("10") |
 
 Section labels (SORT BY, LIBRARY...) are uppercase with ~10% letter spacing.
+
+**Arabic text (Step 8B):** Inter has no Arabic letters. Song data that contains Arabic (titles, artists, playlist
+names, the queue title, dialog titles, the search and playlist-name inputs) uses **IBM Plex Sans Arabic** in the
+**same weight and size** (Regular / Medium / Semi Bold / Bold), with `lineHeight` = 1.4 × size and
+`includeFontPadding: false`, so marks above and below the letters are not cut off. A mixed Arabic/Latin text is
+drawn completely in Plex Arabic (it has Latin letters too). All other text stays Inter. Code: `AppText`
+(instead of `Text` for song data) and `withArabicFont` (for inputs).
 
 ## Opacity → `src/theme/opacity.ts`
 
