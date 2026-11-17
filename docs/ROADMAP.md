@@ -1,5 +1,12 @@
 # Pitch Black — Roadmap
 
+## Where we stopped (2026-11-17)
+- **Step 6C — Scroll performance: in progress.** Plan approved: move the song lists to FlashList v2
+  (`@shopify/flash-list` 2.3.2 is installed, JS only, no new build), `makeStyles` cache per theme + accent,
+  one `useTheme` per row, "⋯" made of Views, recycling checks. The "before" benchmark is not taken yet.
+- **Next after 6C:** Step 7C (tabs at the top like Samsung Music, Settings as a gear icon, remove "+" on
+  Playlists), then Step 7B (multi-select + hide), 6B, 9, 10.
+
 Work on **one step at a time**. A step is done only when every "Done when" item is true
 and the app runs on a real Android phone: with **Expo Go** until Step 2B,
 then with the **development build** (from Step 2B on).
