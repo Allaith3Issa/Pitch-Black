@@ -41,7 +41,7 @@ const PERMISSION_ERROR = 'Could not ask for permission to read your music. Pleas
 
 // Errors from the media-store native module, by error code.
 const LOAD_ERROR_MESSAGES: Record<string, string> = {
-  ERR_MISSING_AUDIO_PERMISSION: 'Pitch PLAYER does not have permission to read your music.',
+  ERR_MISSING_AUDIO_PERMISSION: 'Pitch Black does not have permission to read your music.',
   ERR_MEDIA_STORE_QUERY: 'Could not read the music on your device. Please try again.',
 };
 const DEFAULT_LOAD_ERROR = 'Could not read the music on your device.';

@@ -27,7 +27,7 @@ export default function SongList() {
     return (
       <StateMessage
         title="No access to your music"
-        description={permissionError?.message ?? 'Allow Pitch PLAYER to read the audio files on your device.'}
+        description={permissionError?.message ?? 'Allow Pitch Black to read the audio files on your device.'}
         detail={permissionError?.detail}
         action={<Button label={allowAccess.label} onPress={allowAccess.onPress} />}
       />

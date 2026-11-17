@@ -22,10 +22,10 @@ export default function PermissionView() {
         <Music color={colors.text} size={iconSizes.hero} />
       </View>
 
-      <Text style={styles.label}>Pitch PLAYER</Text>
+      <Text style={styles.label}>PITCH BLACK</Text>
       <Text style={styles.title}>Access your music</Text>
       <Text style={styles.body}>
-        Pitch PLAYER needs permission to read the audio files on your device so you can play them offline.
+        Pitch Black needs permission to read the audio files on your device so you can play them offline.
       </Text>
 
       {permissionError ? (
