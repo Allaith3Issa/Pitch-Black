@@ -16,10 +16,11 @@ type SongRowProps = {
   /** This song is loaded in the player (playing or paused): show the "Playing" state. */
   isCurrent: boolean;
   onPress: (index: number) => void;
+  /** The "⋯" button: opens the song options. */
+  onMore: (song: Song) => void;
 };
 
-// The "⋯" button gets its action in Step 7.
-function SongRow({ song, index, isCurrent, onPress }: SongRowProps) {
+function SongRow({ song, index, isCurrent, onPress, onMore }: SongRowProps) {
   const styles = useStyles();
   const { colors } = useTheme();
   const duration = formatDuration(song.durationSec);
@@ -52,6 +53,7 @@ function SongRow({ song, index, isCurrent, onPress }: SongRowProps) {
       <IconButton
         icon={<Ellipsis color={colors.textSecondary} size={iconSizes.md} />}
         accessibilityLabel={`More options for ${song.title}`}
+        onPress={() => onMore(song)}
       />
     </Pressable>
   );

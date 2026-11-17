@@ -1,7 +1,8 @@
-import { Heart, Pause, Play, SkipForward } from 'lucide-react-native';
+import { Pause, Play, SkipForward } from 'lucide-react-native';
 import { Animated, Pressable, Text, View } from 'react-native';
 
 import Artwork from '@/components/Artwork';
+import FavoriteButton from '@/components/FavoriteButton';
 import IconButton from '@/components/IconButton';
 import MiniPlayerProgress from '@/components/MiniPlayerProgress';
 import { useCurrentSong } from '@/hooks/useCurrentSong';
@@ -14,7 +15,6 @@ import { openNowPlaying } from '@/utils/openNowPlaying';
 /**
  * Mini Player (design screen 02), shown above the tab bar. Hidden when nothing is loaded.
  * Tap or swipe up = open Now Playing. Swipe left = next song, swipe right = previous song.
- * The heart gets its action in Step 7.
  */
 export default function MiniPlayer() {
   const styles = useStyles();
@@ -48,7 +48,7 @@ export default function MiniPlayer() {
             )}
           </View>
         </Pressable>
-        <IconButton icon={<Heart color={colors.text} size={iconSizes.md} />} accessibilityLabel="Add to favorites" />
+        <FavoriteButton song={song} />
         <IconButton
           icon={<SkipForward color={colors.text} size={iconSizes.md} />}
           accessibilityLabel="Next song"

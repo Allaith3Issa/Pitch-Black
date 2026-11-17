@@ -10,7 +10,9 @@ import SeekBar from '@/features/player/SeekBar';
 import { useCurrentSong } from '@/hooks/useCurrentSong';
 import { useNowPlayingSheet } from '@/hooks/useNowPlayingSheet';
 import { usePlayerStore } from '@/store/playerStore';
+import { usePlaylistStore } from '@/store/playlistStore';
 import { makeStyles, radius, sizes, spacing } from '@/theme';
+import { getQueueTitle } from '@/utils/queueSource';
 
 /**
  * Now Playing (design screen 06). Reads the same stores as the Mini Player, so both always match.
@@ -19,7 +21,9 @@ import { makeStyles, radius, sizes, spacing } from '@/theme';
 export default function NowPlaying() {
   const styles = useStyles();
   const song = useCurrentSong();
-  const queueTitle = usePlayerStore((state) => state.queueTitle);
+  const queueSource = usePlayerStore((state) => state.queueSource);
+  // Read live, so renaming the playing playlist shows the new name right away.
+  const queueTitle = usePlaylistStore((state) => getQueueTitle(queueSource, state.playlists));
   const { translateY, panHandlers, close } = useNowPlayingSheet();
   // The artwork fills the space left above the title (296 like in Figma, smaller on small screens),
   // so the controls always fit without scrolling. 0 until the space is measured.

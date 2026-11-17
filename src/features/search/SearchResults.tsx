@@ -6,6 +6,7 @@ import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useSongSearch } from '@/hooks/useSongSearch';
 import { useLibraryStore } from '@/store/libraryStore';
 import { makeStyles, screenPadding, spacing, typography } from '@/theme';
+import { SEARCH_QUEUE } from '@/utils/queueSource';
 
 type SearchResultsProps = {
   query: string;
@@ -42,7 +43,7 @@ export default function SearchResults({ query }: SearchResultsProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.count}>{results.length === 1 ? '1 result' : `${results.length} results`}</Text>
-      <SongFlatList songs={results} queueTitle="Search results" dismissKeyboardOnDrag />
+      <SongFlatList songs={results} queueSource={SEARCH_QUEUE} dismissKeyboardOnDrag />
     </View>
   );
 }

@@ -173,22 +173,29 @@ Step 5: slider already in the Step 4 dev build.
 swipe gestures and the open / close slide animations, Mini Player readable in OLED and Light.
 
 ## Step 7 — Favorites & Playlists
-- [ ] Favorites: heart toggles in Song Options, Mini Player, Now Playing; Favorites tab lists them (screen 11)
-- [ ] Song Options sheet (screen 04): Add to favorites, Add to playlist
-- [ ] Add to Playlist sheet (screen 13): New playlist + list of playlists, check on playlists that already have the song
-- [ ] Playlists tab (screen 07): list, Create playlist
-- [ ] New Playlist dialog (screen 08)
-- [ ] Playlist Detail (screen 09): Play / Shuffle, Add songs, song list, rename & delete playlist (from "⋯")
-- [ ] Add Songs screen (screen 10): search + multi-select with checkboxes
-- [ ] Remove a song from a playlist
-- [ ] `playlistStore` + favorites saved with `persist` (survive restart)
-- [ ] If a saved song no longer exists on the device, skip it safely
+- [x] Favorites: heart toggles in Song Options, Mini Player, Now Playing; Favorites tab lists them (screen 11)
+- [x] Song Options sheet (screen 04): Add to favorites, Add to playlist
+- [x] Add to Playlist sheet (screen 13): New playlist + list of playlists, check on playlists that already have the song
+- [x] Playlists tab (screen 07): list, Create playlist
+- [x] New Playlist dialog (screen 08)
+- [x] Playlist Detail (screen 09): Play / Shuffle, Add songs, song list, rename & delete playlist (from "⋯")
+- [x] Add Songs screen (screen 10): search + multi-select with checkboxes
+- [x] Remove a song from a playlist
+- [x] `playlistStore` + favorites saved with `persist` (survive restart)
+- [x] If a saved song no longer exists on the device, skip it safely
+- [x] Queue source per list (title on Now Playing follows a rename; the playing song tapped in another list
+      switches the queue without restarting); Shuffle button is an on/off toggle (Active style while on)
 
 > **From the full review:** MediaStore ids are not stable (they change when a file is re-added, after a phone
 > migration...). Store a fallback key (filename + duration) next to each id and re-match on load.
 > Favorites, playlists and settings live in separate small persisted stores that hold ids only.
 
 **Done when:** playlists and favorites work and survive an app restart.
+✅ Verified on device: heart in sync (Song Options, Mini Player, Now Playing), Favorites newest first,
+create / rename / delete playlists with unique names, checklist "Add to playlist", Add Songs (already added =
+checked and dimmed), remove from playlist, everything survives a restart, a missing song is skipped and comes
+back, queue title follows the list and a rename, the playing song switches lists without restarting,
+Shuffle button works as a toggle.
 
 ## Step 8 — Settings
 - [ ] Settings screen (screen 12)
@@ -215,6 +222,8 @@ Step 6 collects **all** native work, so there is only one new dev build (after t
 - [ ] Song info sheet from the "⋯" menu: title, artist, album, duration, filename, folder, size, format,
       bitrate, date added
 - [ ] Share from the "⋯" menu: Android share sheet with the audio file itself
+- [ ] Custom playlist cover from the phone's gallery (`expo-image-picker`), copied into the app's own storage
+      (so it survives if the original photo is deleted), with "Change cover" / "Remove cover" (Playlist Detail "⋯")
 - [ ] Light mode navigation bar buttons (found in Step 4B — light buttons on white). Exact solution:
       - `npx expo install expo-navigation-bar`
       - in `app.json` plugins: `["expo-navigation-bar", { "enforceContrast": false, "style": "light" }]`
@@ -254,6 +263,7 @@ something for that build.
 - [ ] Cold start in Light mode: buttons may be light for a moment before JS runs (plugin starts with "light")
 - [ ] `userInterfaceStyle: "automatic"` (Step 4B): System theme still follows the phone; OLED / Light still forced
 - [ ] All Step 6 native features (covers, song info, share) on the new build
+- [ ] Playlist cover from the gallery: pick, survives deleting the original photo, Change / Remove cover
 - [ ] Quick re-test of everything before: playback, sorting, search, themes, favorites, playlists, settings
 
 ---
@@ -262,3 +272,8 @@ something for that build.
 Not planned for now.
 - Set a song as ringtone / notification sound
 - Run Prettier on the whole project, in one separate commit (style only, no code changes)
+- Music recognition (AcoustID) to fill in missing titles / artists
+- Alphabet scroller on the song list (jump to a letter)
+- "Up next" queue view
+- Arabic font (Inter has no Arabic letters)
+- Search inside Favorites (the search icon on the Favorites tab)

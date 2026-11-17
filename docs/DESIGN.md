@@ -102,17 +102,20 @@ Section labels (SORT BY, LIBRARY...) are uppercase with ~10% letter spacing.
 | `SongRow` | Height ~64. Artwork 48 + title (15 Medium) + subtitle "Artist • 3:45 • ▶ 12" (13 `textSecondary`) + "⋯" button. **Play count** (since Step 4C): small filled play icon (12) + number in `textTertiary`, only when the count is > 0. Artist, duration and count are separate texts (bidi-safe); duration and count always stay visible, the artist is cut off first. **Playing state:** `primarySoft` background, radius 12, title `primaryText` Semi Bold, equalizer icon |
 | `Artwork` | `surface2` square with a music icon in `textTertiary`. Sizes: 44, 48, 120, 296. From Step 6: the song's cover; songs without a cover get a colored placeholder with the first letter of the title |
 | `MiniPlayer` | `surface2`, 1px `border`, radius 14, 8px margin (Step 5: stands out from the song list). Artwork 44, title (14 Semi Bold), artist (12), heart, **next** (Allaith's decision, not in Figma), 40px `primary` play/pause circle. 3px progress line at the bottom (`progressTrack` track, `primary` fill). **Gestures (Step 5):** tap or swipe up = open Now Playing, swipe left = next song, swipe right = previous song. The card follows the finger sideways; past 60 px it slides out in that direction and the new song slides in from the other side (~270 ms), a shorter swipe springs back; a move under 12 px stays a tap |
-| `Button` | Height 44, radius 12, icon + label (15 Semi Bold). **Primary:** `primary` bg, white content. **Secondary:** `surface2` bg, white content |
+| `Button` | Height 44, radius 12, icon + label (15 Semi Bold). **Primary:** `primary` bg, white content. **Secondary:** `surface2` bg, `text` content. **Active** (an on/off button that is on, e.g. Shuffle): `primarySoft` bg, `primaryText` content. Disabled: `opacity.disabled` |
 | `Chip` | Pill, `surface2`, sort icon 16 + label (13 Medium) |
 | `IconButton` | 44×44 round touch area, icon 24 |
 | `BottomSheet` | `surface`, top radius 24, 1px `border`, handle 36×4 (`textTertiary`), scrim behind |
 | `SheetOption` | Icon 20 + label 15. Selected: `surface2` bg + check icon |
 | `Dialog` | Centered, width 312, `surface`, radius 24 |
-| `TextInput` | Height 44–48, `surface2`, radius 12. Focused: 1.5px `primary` border |
+| `TextInput` | Height 44–48, `surface2`, radius 12. Focused: 1.5px `primary` border. Error text under it (12, `primaryText`). Code: `TextField` |
 | `Toggle` | 44×26. On: `primary` track, white knob. Off: `surface2` track |
 | `SegmentedControl` | Height 44, `surface2` track, radius 12, 4px padding. Selected segment: `primary` bg (radius 8), `onPrimary` label Semi Bold. Others: `textSecondary` label |
 | `AccentSwatch` | 36 circle in the accent's `primary`, inside a 44 touch area. Selected: 2px ring in `text` + white check |
-| `Checkbox` | 24 round. On: `primary` + white check. Off: 2px `textTertiary` border |
+| `Checkbox` | 24 round. On: `primary` + white check. Off: 2px `textTertiary` border. Disabled: dimmed |
+| `FavoriteButton` | Heart in an IconButton (Mini Player, Now Playing). Off: outline in `text`. On: filled `primaryText` |
+| `PlaylistCover` | Square with an icon: `surface2` (playlists, 48 / 56 / 120), `primary` + white plus ("New playlist"), dashed `textTertiary` outline ("Create playlist") |
+| `PlaylistRow` | Cover + name (16 Semi Bold) + subtitle (13 `textSecondary`) + optional right element. Height 72 (Playlists tab) or 64 (sheets, "Add songs") |
 
 ---
 
@@ -121,17 +124,17 @@ Section labels (SORT BY, LIBRARY...) are uppercase with ~10% letter spacing.
 | # | Figma frame | Route (`src/app/`) | Notes |
 |---|---|---|---|
 | 01 | Permission | `permission.tsx` | Big music icon, "Access your music", Allow access (Primary), Not now |
-| 02 | Songs | `(tabs)/index.tsx` | Title + search icon, "N songs" + sort chip, Play / Shuffle, song list, Mini Player |
+| 02 | Songs | `(tabs)/index.tsx` | Title + search icon, "N songs" + sort chip, Play / Shuffle, song list, Mini Player. **Shuffle button** (also on Favorites and Playlist Detail) is a toggle: off → turns shuffle on and plays a random song; on → turns shuffle off like the Now Playing icon (current song keeps playing, next songs in list order). Style: Active while on, Secondary when off |
 | 03 | Sort Sheet | component (sheet) | SORT BY: Name, Date added, Most played (trending-up icon, Step 4C) · ORDER: Ascending, Descending. Chip labels: "Name · A–Z / Z–A", "Date added · Oldest / Newest", "Most played · Least / Most" (Descending = most played first; picking "Most played" switches to Descending). The "Most played" order is frozen while the list is on screen; it updates when the screen is shown again or the sort changes |
-| 04 | Song Options | component (sheet) | Song header, Add to favorites, Add to playlist |
+| 04 | Song Options | component (sheet) | Opened from the song "⋯" on every song list. Song header, Add to / Remove from favorites, Add to playlist (switches the same sheet to screen 13), Remove from playlist (only on Playlist Detail). Song info and Share: Step 6 |
 | 05 | Search | `search.tsx` | Back + input with clear, results count, song list |
-| 06 | Now Playing | `player.tsx` (modal) | Slides up from the bottom (300 ms) and slides down when it closes (chevron, back button, or swipe down: follows the finger, closes after 120 px or a fast swipe, otherwise springs back; the slider never starts it). Chevron down, "NOW PLAYING / <queue>" ("All songs" or "Search results"), ⋯, artwork 296 (smaller on narrow screens), title/artist + heart, slider + times. **Controls (Allaith's decision, Layout A — differs from Figma 06b's single row):** main row skip back 10 s / previous (52) / play-pause (76) / next (52) / skip forward 10 s; under it shuffle (left) and repeat (right): active = `primaryText` + 4px dot, repeat-one uses the repeat-1 icon. Skip buttons can be turned off in Step 8. No cover → "Search for a cover" button on the artwork placeholder; with a chosen cover → "Change cover" / "Remove cover" |
-| 07 | Playlists | `(tabs)/playlists.tsx` | Title + plus, "Create playlist" dashed tile, playlist rows |
-| 08 | New Playlist Dialog | component (dialog) | Name input, Cancel / Create |
-| 09 | Playlist Detail | `playlist/[id]/index.tsx` | Back + ⋯, cover 120, name, "8 songs · 31 min", Play / Shuffle, Add songs, list |
-| 10 | Add Songs | `playlist/[id]/add-songs.tsx` (modal) | Close, "Add songs to …", Add (n) button, search, rows with checkboxes |
-| 11 | Favorites | `(tabs)/favorites.tsx` | Title + search, count, Play / Shuffle, list |
+| 06 | Now Playing | `player.tsx` (modal) | Slides up from the bottom (300 ms) and slides down when it closes (chevron, back button, or swipe down: follows the finger, closes after 120 px or a fast swipe, otherwise springs back; the slider never starts it). Chevron down, "NOW PLAYING / <queue>" ("All songs", "Search results", "Favorites" or the playlist's current name), ⋯, artwork 296 (smaller on narrow screens), title/artist + heart, slider + times. **Controls (Allaith's decision, Layout A — differs from Figma 06b's single row):** main row skip back 10 s / previous (52) / play-pause (76) / next (52) / skip forward 10 s; under it shuffle (left) and repeat (right): active = `primaryText` + 4px dot, repeat-one uses the repeat-1 icon. Skip buttons can be turned off in Step 8. No cover → "Search for a cover" button on the artwork placeholder; with a chosen cover → "Change cover" / "Remove cover" |
+| 07 | Playlists | `(tabs)/playlists.tsx` | Title + plus, "N playlists", "Create playlist" dashed tile, playlist rows (newest first) with ⋯ → Rename / Delete. A new playlist opens right away |
+| 08 | New Playlist Dialog | component (dialog) | Name input, Cancel / Create. Names are unique (case and spaces ignored): "A playlist with this name already exists" and Create stays disabled; max 50 characters. Same dialog for Rename ("Save"). Delete asks first: "Delete \"…\"?" + "The playlist is removed. The songs stay on your phone." (Cancel / Delete) |
+| 09 | Playlist Detail | `playlist/[id]/index.tsx` | Back + ⋯, cover 120, "PLAYLIST", name, "8 songs · 31 min", Play / Shuffle, Add songs, list. "N songs are not on this phone" when saved songs are missing; "No songs yet. Tap \"Add songs\" to add some." when empty. **Mini Player at the bottom, no tab bar** (Allaith's decision; Figma shows the tab bar) |
+| 10 | Add Songs | `playlist/[id]/add-songs.tsx` (modal) | Close, "Add songs / to …", Add (n) button (disabled at 0), search, rows with checkboxes in the Songs sort order. Songs already in the playlist: checked, dimmed, cannot be changed |
+| 11 | Favorites | `(tabs)/favorites.tsx` | Title, count, Play / Shuffle, list (newest favorite first). No search icon for now (Ideas for later). Empty: "No favorites yet" |
 | 12 | Settings | `(tabs)/settings.tsx` | LIBRARY (Rescan, Default sort) · PLAYBACK (toggles, skip buttons on/off + 5 / 10 / 15 / 30 s) · COVERS ("Download covers on Wi-Fi only", default on) · ABOUT (version) |
-| 13 | Add to Playlist | component (sheet) | Song info, New playlist, playlists (check on already added) |
+| 13 | Add to Playlist | component (sheet) | "Add to playlist" + song, New playlist (creates it with this song), playlists with a checkbox: works like a checklist (tap = add / remove), the sheet stays open |
 
-The Mini Player and Tab Bar show on all tab screens. The Mini Player is hidden when nothing is playing.
+The Mini Player and Tab Bar show on all tab screens; Playlist Detail shows only the Mini Player. The Mini Player is hidden when nothing is playing.

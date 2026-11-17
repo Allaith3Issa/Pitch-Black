@@ -49,6 +49,20 @@ export const sizes = {
   playerTopBar: 52,
   /** Small dot under an active shuffle / repeat button. */
   activeDot: 4,
+  /** Row on the Playlists tab (Figma 07). */
+  playlistRow: 72,
+  /** Playlist cover in a row on the Playlists tab. */
+  playlistCoverRow: 56,
+  /** Playlist cover on Playlist Detail (Figma 09). */
+  playlistCoverHero: 120,
+  /** Round checkbox (Add Songs, Add to playlist). */
+  checkbox: 24,
+  /** Checkbox border when off. */
+  checkboxBorder: 2,
+  /** Dashed outline of the "Create playlist" tile. */
+  dashedOutline: 2,
+  /** Dialog width (DESIGN.md: 312). */
+  dialog: 312,
 } as const;
 
 // Icon line thickness (lucide strokeWidth). The active tab icon is bolder.
@@ -73,4 +87,8 @@ export const iconSizes = {
   playerToggle: 22,
   /** Previous / next / play-pause on Now Playing. */
   playerMain: 30,
+  /** Icon on the playlist cover in a row (Figma 07: 22). */
+  playlistRow: 22,
+  /** Icon on the big playlist cover (Figma 09: 48). */
+  playlistHero: 48,
 } as const;

@@ -8,12 +8,15 @@ type SheetOptionProps = {
   label: string;
   icon: LucideIcon;
   onPress: () => void;
-  /** Selected: highlighted background + check icon on the right. */
+  /**
+   * For a choice (e.g. sort): selected = highlighted background + check icon on the right.
+   * Leave it out for an action (e.g. "Add to playlist").
+   */
   selected?: boolean;
 };
 
 /** One row in a bottom sheet: icon + label. */
-export default function SheetOption({ label, icon: Icon, onPress, selected = false }: SheetOptionProps) {
+export default function SheetOption({ label, icon: Icon, onPress, selected }: SheetOptionProps) {
   const styles = useStyles();
   const { colors } = useTheme();
   const contentColor = selected ? colors.text : colors.textSecondary;
@@ -21,8 +24,8 @@ export default function SheetOption({ label, icon: Icon, onPress, selected = fal
   return (
     <Pressable
       onPress={onPress}
-      accessibilityRole="radio"
-      accessibilityState={{ checked: selected }}
+      accessibilityRole={selected === undefined ? 'button' : 'radio'}
+      accessibilityState={selected === undefined ? undefined : { checked: selected }}
       style={({ pressed }) => [styles.row, selected && styles.selected, pressed && styles.pressed]}
     >
       <Icon color={contentColor} size={iconSizes.option} />

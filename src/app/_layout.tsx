@@ -17,11 +17,13 @@ import { useSavedDataRematch } from '@/hooks/useSavedDataRematch';
 import { useSystemUiTheme } from '@/hooks/useSystemUiTheme';
 import { useTheme } from '@/hooks/useTheme';
 import { configureAudio } from '@/services/audioPlayer';
+import { useFavoritesStore } from '@/store/favoritesStore';
 import { usePlayCountStore } from '@/store/playCountStore';
+import { usePlaylistStore } from '@/store/playlistStore';
 import { useSettingsStore } from '@/store/settingsStore';
 
-// Keep the splash screen visible until the fonts, the saved settings / play counts and the first permission
-// check are ready.
+// Keep the splash screen visible until the fonts, the saved data (settings, play counts, favorites, playlists)
+// and the first permission check are ready.
 SplashScreen.preventAutoHideAsync();
 
 // Play on silent mode and pause when another app takes the audio (see services/audioPlayer).
@@ -47,10 +49,14 @@ export default function RootLayout() {
   const isSettingsReady = useSettingsStore((state) => state.isHydrated);
   // Wait for the saved play counts too, so "Most played" is right from the first frame.
   const isPlayCountReady = usePlayCountStore((state) => state.isHydrated);
+  // And for favorites and playlists, so their lists never flash empty.
+  const isFavoritesReady = useFavoritesStore((state) => state.isHydrated);
+  const isPlaylistsReady = usePlaylistStore((state) => state.isHydrated);
 
   // If the fonts fail to load we still open the app (with the system font) instead of hanging.
   const fontsReady = fontsLoaded || fontError !== null;
-  const isReady = fontsReady && isPermissionChecked && isSettingsReady && isPlayCountReady;
+  const isReady =
+    fontsReady && isPermissionChecked && isSettingsReady && isPlayCountReady && isFavoritesReady && isPlaylistsReady;
 
   useEffect(() => {
     if (isReady) {

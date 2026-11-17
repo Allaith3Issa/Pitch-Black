@@ -3,14 +3,12 @@ import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import Button from '@/components/Button';
 import SongFlatList from '@/components/SongFlatList';
 import StateMessage from '@/components/StateMessage';
-import SongActions from '@/features/songs/SongActions';
+import SongActions from '@/components/SongActions';
 import { useAllowAccess } from '@/hooks/useAllowAccess';
 import { useSortedSongs } from '@/hooks/useSortedSongs';
 import { useTheme } from '@/hooks/useTheme';
 import { useLibraryStore } from '@/store/libraryStore';
-
-// Shown on Now Playing when a song from this list plays.
-const ALL_SONGS = 'All songs';
+import { SONGS_QUEUE } from '@/utils/queueSource';
 
 /** The sorted song list with its loading / error / empty / no-access states. */
 export default function SongList() {
@@ -59,8 +57,8 @@ export default function SongList() {
 
   return (
     <>
-      <SongActions songs={songs} queueTitle={ALL_SONGS} />
-      <SongFlatList songs={songs} queueTitle={ALL_SONGS} />
+      <SongActions songs={songs} queueSource={SONGS_QUEUE} />
+      <SongFlatList songs={songs} queueSource={SONGS_QUEUE} />
     </>
   );
 }

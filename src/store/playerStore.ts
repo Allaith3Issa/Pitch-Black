@@ -5,6 +5,7 @@ import { pausePlayThrough } from '@/services/playCountTracker';
 import { usePlaybackProgressStore } from '@/store/playbackProgressStore';
 import { createPlayerEngine } from '@/store/playerEngine';
 import { useSettingsStore } from '@/store/settingsStore';
+import type { QueueSource } from '@/types/player';
 import { randomIndex, shuffleIds } from '@/utils/shuffle';
 import { getSkipTarget } from '@/utils/skip';
 
@@ -15,8 +16,8 @@ export type PlayerState = {
   listQueue: string[];
   /** Song ids in play order: `listQueue`, or a shuffled copy of it when shuffle is on. */
   queue: string[];
-  /** Where the queue comes from, shown on Now Playing (e.g. "All songs"). */
-  queueTitle: string;
+  /** Where the queue comes from (Now Playing shows its title, see utils/queueSource), or `null`. */
+  queueSource: QueueSource | null;
   /** Index in `queue` of the current song, or -1 when nothing is loaded. */
   currentIndex: number;
   isPlaying: boolean;
@@ -24,11 +25,16 @@ export type PlayerState = {
   /** A short message to show once (e.g. a song could not be played), or `null`. */
   errorMessage: string | null;
 
-  playQueue: (ids: string[], startIndex: number, title: string) => void;
+  playQueue: (ids: string[], startIndex: number, source: QueueSource) => void;
   /** "Play" button: turns shuffle off and plays `ids` in list order from the first song. */
-  playInOrder: (ids: string[], title: string) => void;
+  playInOrder: (ids: string[], source: QueueSource) => void;
   /** Turns shuffle on and plays `ids` from a random song. */
-  shufflePlay: (ids: string[], title: string) => void;
+  shufflePlay: (ids: string[], source: QueueSource) => void;
+  /**
+   * The playing song was tapped in another list: that list becomes the queue. The song keeps playing
+   * (same position); `index` is its place in `ids`.
+   */
+  switchQueue: (ids: string[], index: number, source: QueueSource) => void;
   /** Shuffle on: the other songs are mixed. Off: back to the list order. The current song keeps playing. */
   toggleShuffle: () => void;
   togglePlay: () => void;
@@ -56,30 +62,42 @@ export const usePlayerStore = create<PlayerState>()((set, get) => {
   return {
     listQueue: [],
     queue: [],
-    queueTitle: '',
+    queueSource: null,
     currentIndex: -1,
     isPlaying: false,
     status: 'idle',
     errorMessage: null,
 
-    playQueue: (ids, startIndex, title) => {
+    playQueue: (ids, startIndex, source) => {
       if (ids.length === 0) return;
       const shuffle = useSettingsStore.getState().shuffle;
       // With shuffle on, the tapped song plays first and the others follow in a mixed order.
-      set({ listQueue: ids, queue: shuffle ? shuffleIds(ids, ids[startIndex]) : ids, queueTitle: title });
+      set({ listQueue: ids, queue: shuffle ? shuffleIds(ids, ids[startIndex]) : ids, queueSource: source });
       engine.startQueue(shuffle ? 0 : startIndex);
     },
 
-    playInOrder: (ids, title) => {
+    playInOrder: (ids, source) => {
       if (ids.length === 0) return;
       useSettingsStore.getState().setShuffle(false);
-      get().playQueue(ids, 0, title);
+      get().playQueue(ids, 0, source);
     },
 
-    shufflePlay: (ids, title) => {
+    shufflePlay: (ids, source) => {
       if (ids.length === 0) return;
       useSettingsStore.getState().setShuffle(true);
-      get().playQueue(ids, randomIndex(ids.length), title);
+      get().playQueue(ids, randomIndex(ids.length), source);
+    },
+
+    switchQueue: (ids, index, source) => {
+      if (ids[index] === undefined) return;
+      // Same rules as playQueue, but nothing is loaded: the current song just goes on.
+      const shuffle = useSettingsStore.getState().shuffle;
+      set({
+        listQueue: ids,
+        queue: shuffle ? shuffleIds(ids, ids[index]) : ids,
+        currentIndex: shuffle ? 0 : index,
+        queueSource: source,
+      });
     },
 
     toggleShuffle: () => {

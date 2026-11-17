@@ -1,9 +1,7 @@
-import { Heart } from 'lucide-react-native';
 import { Text, View } from 'react-native';
 
-import IconButton from '@/components/IconButton';
-import { useTheme } from '@/hooks/useTheme';
-import { fonts, iconSizes, makeStyles, spacing, typography } from '@/theme';
+import FavoriteButton from '@/components/FavoriteButton';
+import { fonts, makeStyles, spacing, typography } from '@/theme';
 import type { Song } from '@/types/song';
 
 type NowPlayingTitleProps = {
@@ -13,7 +11,6 @@ type NowPlayingTitleProps = {
 /** Song title, artist and the heart on Now Playing. */
 export default function NowPlayingTitle({ song }: NowPlayingTitleProps) {
   const styles = useStyles();
-  const { colors } = useTheme();
 
   return (
     <View style={styles.row}>
@@ -25,8 +22,7 @@ export default function NowPlayingTitle({ song }: NowPlayingTitleProps) {
           {song.artist ?? 'Unknown artist'}
         </Text>
       </View>
-      {/* The heart gets its action in Step 7 (favorites). */}
-      <IconButton icon={<Heart color={colors.text} size={iconSizes.md} />} accessibilityLabel="Add to favorites" />
+      <FavoriteButton song={song} />
     </View>
   );
 }

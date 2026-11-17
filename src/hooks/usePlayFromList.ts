@@ -1,31 +1,34 @@
 import { useCallback } from 'react';
 
 import { usePlayerStore } from '@/store/playerStore';
+import type { QueueSource } from '@/types/player';
 import type { Song } from '@/types/song';
+import { isSameQueueSource } from '@/utils/queueSource';
 
 /**
  * Returns a function for tapping a song in a list:
- * - the song that is already loaded → pause / play
+ * - the playing song, in the list it plays from → pause / play
+ * - the playing song, in another list → that list becomes the queue; the song keeps playing
  * - another song → play it, with the list exactly as shown as the queue
- * `queueTitle` names the list on Now Playing (e.g. "All songs").
+ * `source` is the list (see utils/queueSource).
  */
-export function usePlayFromList(songs: Song[], queueTitle: string): (index: number) => void {
+export function usePlayFromList(songs: Song[], source: QueueSource): (index: number) => void {
   const playQueue = usePlayerStore((state) => state.playQueue);
   const togglePlay = usePlayerStore((state) => state.togglePlay);
+  const switchQueue = usePlayerStore((state) => state.switchQueue);
 
   return useCallback(
     (index: number) => {
-      const { queue, currentIndex } = usePlayerStore.getState();
-      if (queue[currentIndex] === songs[index]?.id) {
+      const { queue, currentIndex, queueSource } = usePlayerStore.getState();
+      const ids = songs.map((song) => song.id);
+      if (queue[currentIndex] !== songs[index]?.id) {
+        playQueue(ids, index, source);
+      } else if (isSameQueueSource(queueSource, source)) {
         togglePlay();
       } else {
-        playQueue(
-          songs.map((song) => song.id),
-          index,
-          queueTitle,
-        );
+        switchQueue(ids, index, source);
       }
     },
-    [songs, queueTitle, playQueue, togglePlay],
+    [songs, source, playQueue, togglePlay, switchQueue],
   );
 }
