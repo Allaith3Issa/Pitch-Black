@@ -21,13 +21,17 @@ type SettingsState = {
 // Saved on the phone (AsyncStorage), so the choices survive an app restart.
 export const useSettingsStore = create<SettingsState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       sortBy: 'name',
       sortOrder: 'asc',
       themeMode: 'oled',
       accent: 'purple',
       isHydrated: false,
-      setSortBy: (sortBy) => set({ sortBy }),
+      setSortBy: (sortBy) => {
+        if (sortBy === get().sortBy) return;
+        // Switching to "Most played" starts with the most played songs on top.
+        set(sortBy === 'mostPlayed' ? { sortBy, sortOrder: 'desc' } : { sortBy });
+      },
       setSortOrder: (sortOrder) => set({ sortOrder }),
       setThemeMode: (themeMode) => set({ themeMode }),
       setAccent: (accent) => set({ accent }),

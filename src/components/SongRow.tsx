@@ -4,6 +4,7 @@ import { Pressable, Text, View } from 'react-native';
 
 import Artwork from '@/components/Artwork';
 import IconButton from '@/components/IconButton';
+import PlayCount from '@/components/PlayCount';
 import { useTheme } from '@/hooks/useTheme';
 import { fonts, iconSizes, makeStyles, radius, screenPadding, sizes, spacing, typography } from '@/theme';
 import type { Song } from '@/types/song';
@@ -35,8 +36,8 @@ function SongRow({ song, index, isCurrent, onPress }: SongRowProps) {
         <Text style={[styles.title, isCurrent && styles.titleCurrent]} numberOfLines={1}>
           {song.title}
         </Text>
-        {/* Artist and duration are separate texts, so mixed Arabic/English artists cannot move the
-            duration into the middle, and the duration stays visible when the artist is cut off. */}
+        {/* Artist, duration and play count are separate texts, so mixed Arabic/English artists cannot
+            move them into the middle, and they stay visible when the artist is cut off. */}
         <View style={styles.subtitleRow}>
           {song.artist !== null && (
             <Text style={[styles.subtitle, styles.artist]} numberOfLines={1}>
@@ -44,6 +45,7 @@ function SongRow({ song, index, isCurrent, onPress }: SongRowProps) {
             </Text>
           )}
           <Text style={styles.subtitle}>{song.artist !== null ? ` • ${duration}` : duration}</Text>
+          <PlayCount songId={song.id} />
         </View>
       </View>
       {isCurrent && <ChartNoAxesColumn color={colors.primaryText} size={iconSizes.option} />}
@@ -87,6 +89,7 @@ const useStyles = makeStyles(({ colors }) => ({
   },
   subtitleRow: {
     flexDirection: 'row',
+    alignItems: 'center',
   },
   artist: {
     flexShrink: 1,

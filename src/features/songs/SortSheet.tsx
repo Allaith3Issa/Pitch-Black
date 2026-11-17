@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUp, Clock, Music } from 'lucide-react-native';
+import { ArrowDown, ArrowUp, Clock, Music, TrendingUp } from 'lucide-react-native';
 import { View } from 'react-native';
 
 import BottomSheet from '@/components/BottomSheet';
@@ -29,6 +29,12 @@ export default function SortSheet({ visible, onClose }: SortSheetProps) {
         icon={Clock}
         selected={sortBy === 'dateAdded'}
         onPress={() => setSortBy('dateAdded')}
+      />
+      <SheetOption
+        label="Most played"
+        icon={TrendingUp}
+        selected={sortBy === 'mostPlayed'}
+        onPress={() => setSortBy('mostPlayed')}
       />
 
       <View style={styles.divider} />

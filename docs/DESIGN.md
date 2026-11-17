@@ -97,7 +97,7 @@ Section labels (SORT BY, LIBRARY...) are uppercase with ~10% letter spacing.
 | Component | Description |
 |---|---|
 | `TabBar` | Floating bar, `surface`, radius 32, 1px `border`, 12px side margin, 64 high. 4 tabs (icon + label): Songs (music), Playlists (list-music), Favorites (heart), Settings (**gear**). **Active:** no background behind the icon; icon `primaryText` with a bolder line (strokeWidth 2.6), label `primaryText` Semi Bold. **Inactive:** icon `textTertiary` (strokeWidth 2), label Medium. Icons keep the same size, so nothing moves when switching tabs |
-| `SongRow` | Height ~64. Artwork 48 + title (15 Medium) + subtitle "Artist • 3:45" (13 `textSecondary`) + "⋯" button. **Playing state:** `primarySoft` background, radius 12, title `primaryText` Semi Bold, equalizer icon |
+| `SongRow` | Height ~64. Artwork 48 + title (15 Medium) + subtitle "Artist • 3:45 • ▶ 12" (13 `textSecondary`) + "⋯" button. **Play count** (since Step 4C): small filled play icon (12) + number in `textTertiary`, only when the count is > 0. Artist, duration and count are separate texts (bidi-safe); duration and count always stay visible, the artist is cut off first. **Playing state:** `primarySoft` background, radius 12, title `primaryText` Semi Bold, equalizer icon |
 | `Artwork` | `surface2` square with a music icon in `textTertiary`. Sizes: 44, 48, 120, 296. From Step 6: the song's cover; songs without a cover get a colored placeholder with the first letter of the title |
 | `MiniPlayer` | `surface`, radius 14, 8px margin. Artwork 44, title (14 Semi Bold), artist (12), heart, **next** (Allaith's decision, not in Figma), 40px `primary` play/pause circle. 2px progress line at the bottom (`border` track, `primary` fill) |
 | `Button` | Height 44, radius 12, icon + label (15 Semi Bold). **Primary:** `primary` bg, white content. **Secondary:** `surface2` bg, white content |
@@ -120,7 +120,7 @@ Section labels (SORT BY, LIBRARY...) are uppercase with ~10% letter spacing.
 |---|---|---|---|
 | 01 | Permission | `permission.tsx` | Big music icon, "Access your music", Allow access (Primary), Not now |
 | 02 | Songs | `(tabs)/index.tsx` | Title + search icon, "N songs" + sort chip, Play / Shuffle, song list, Mini Player |
-| 03 | Sort Sheet | component (sheet) | SORT BY: Name, Date added · ORDER: Ascending, Descending |
+| 03 | Sort Sheet | component (sheet) | SORT BY: Name, Date added, Most played (trending-up icon, Step 4C) · ORDER: Ascending, Descending. Chip labels: "Name · A–Z / Z–A", "Date added · Oldest / Newest", "Most played · Least / Most" (Descending = most played first; picking "Most played" switches to Descending). The "Most played" order is frozen while the list is on screen; it updates when the screen is shown again or the sort changes |
 | 04 | Song Options | component (sheet) | Song header, Add to favorites, Add to playlist |
 | 05 | Search | `search.tsx` | Back + input with clear, results count, song list |
 | 06 | Now Playing | `player.tsx` (modal) | Chevron down, "NOW PLAYING / All songs", ⋯, artwork 296, title/artist + heart, slider + times, shuffle / prev / play-pause (76) / next / repeat. **New:** skip back / skip forward (default 10 s) around play/pause, can be turned off. No cover → "Search for a cover" button on the artwork placeholder; with a chosen cover → "Change cover" / "Remove cover" |

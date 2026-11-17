@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import * as audio from '@/services/audioPlayer';
+import { pausePlayThrough, startPlayThrough, trackPlayThrough } from '@/services/playCountTracker';
 import { useLibraryStore } from '@/store/libraryStore';
 import { usePlaybackProgressStore } from '@/store/playbackProgressStore';
 import { getNextIndex, getPreviousAction } from '@/utils/queue';
@@ -44,6 +45,7 @@ export const usePlayerStore = create<PlayerState>()((set, get) => {
   /** Stops at the start of the current song, so tapping play starts it again. */
   function stop(status: PlaybackStatus) {
     markCommand();
+    startPlayThrough();
     audio.pause();
     audio.seekTo(0).catch(() => undefined);
     usePlaybackProgressStore.setState({ positionSec: 0 });
@@ -54,6 +56,7 @@ export const usePlayerStore = create<PlayerState>()((set, get) => {
   function startSong(index: number): boolean {
     const song = useLibraryStore.getState().songsById[get().queue[index]];
     markCommand();
+    startPlayThrough();
     set({ currentIndex: index, status: 'loading', isPlaying: true });
     usePlaybackProgressStore.setState({ positionSec: 0, durationSec: song?.durationSec ?? 0 });
 
@@ -111,6 +114,9 @@ export const usePlayerStore = create<PlayerState>()((set, get) => {
         ? { positionSec: status.currentTime, durationSec: status.duration }
         : { positionSec: status.currentTime },
     );
+    // Play count (see services/playCountTracker).
+    const song = useLibraryStore.getState().songsById[state.queue[state.currentIndex]];
+    if (song) trackPlayThrough(song, status);
 
     if (Date.now() - lastCommandAt < COMMAND_GRACE_MS) return;
 
@@ -147,6 +153,7 @@ export const usePlayerStore = create<PlayerState>()((set, get) => {
         playFrom(currentIndex);
       } else if (isPlaying) {
         markCommand();
+        pausePlayThrough();
         audio.pause();
         set({ isPlaying: false, status: 'paused' });
       } else {
@@ -167,6 +174,8 @@ export const usePlayerStore = create<PlayerState>()((set, get) => {
       if (currentIndex === -1) return;
       const action = getPreviousAction(currentIndex, usePlaybackProgressStore.getState().positionSec);
       if (action.type === 'restart') {
+        // Restarting the song is a new play-through: it can count again (same rule as repeat-one).
+        startPlayThrough();
         get().seekTo(0);
       } else {
         playFrom(action.index);

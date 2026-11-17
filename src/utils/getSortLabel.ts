@@ -1,9 +1,13 @@
 import type { SortBy, SortOrder } from '@/types/sort';
 
-/** Text for the sort chip, e.g. "Name · A–Z" or "Date added · Newest". */
+/** Text for the sort chip, e.g. "Name · A–Z", "Date added · Newest" or "Most played · Most". */
 export function getSortLabel(sortBy: SortBy, order: SortOrder): string {
-  if (sortBy === 'name') {
-    return order === 'asc' ? 'Name · A–Z' : 'Name · Z–A';
+  switch (sortBy) {
+    case 'name':
+      return order === 'asc' ? 'Name · A–Z' : 'Name · Z–A';
+    case 'dateAdded':
+      return order === 'asc' ? 'Date added · Oldest' : 'Date added · Newest';
+    case 'mostPlayed':
+      return order === 'asc' ? 'Most played · Least' : 'Most played · Most';
   }
-  return order === 'asc' ? 'Date added · Oldest' : 'Date added · Newest';
 }

@@ -8,7 +8,7 @@ import {
 import type { AudioPermission } from '@/types/permission';
 import type { Song } from '@/types/song';
 import { parseSongFilename } from '@/utils/parseSongFilename';
-import { stripArtistPrefix } from '@/utils/stripArtistPrefix';
+import { stripArtistName } from '@/utils/stripArtistName';
 import MediaStore, { type MediaStoreAudioFile } from '@modules/media-store';
 
 // Everything that reads the device's music lives in this file.
@@ -61,8 +61,8 @@ function toSong(file: MediaStoreAudioFile): Song {
   return {
     id: file.id,
     uri: file.uri,
-    // Some title tags repeat the artist ("Artist - Title"): keep only the title.
-    title: stripArtistPrefix(title, artist),
+    // Some title tags repeat the artist ("Artist - Title", "Title _ Artist"): keep only the title.
+    title: stripArtistName(title, artist),
     artist,
     album: cleanTag(file.album),
     albumId: file.albumId,

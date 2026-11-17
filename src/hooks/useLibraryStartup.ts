@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+import { useLibraryAutoRefresh } from '@/hooks/useLibraryAutoRefresh';
 import { usePermissionRecheck } from '@/hooks/usePermissionRecheck';
 import { useLibraryStore } from '@/store/libraryStore';
 
@@ -10,7 +11,10 @@ type LibraryStartup = {
   canEnterApp: boolean;
 };
 
-/** Checks the permission on start and loads the songs as soon as access is granted. */
+/**
+ * Checks the permission on start and loads the songs as soon as access is granted.
+ * Back in the foreground: checks the permission again and rescans quietly.
+ */
 export function useLibraryStartup(): LibraryStartup {
   const permission = useLibraryStore((state) => state.permission);
   const skippedPermission = useLibraryStore((state) => state.skippedPermission);
@@ -18,6 +22,7 @@ export function useLibraryStartup(): LibraryStartup {
   const loadSongs = useLibraryStore((state) => state.loadSongs);
 
   usePermissionRecheck();
+  useLibraryAutoRefresh();
 
   useEffect(() => {
     checkPermission();

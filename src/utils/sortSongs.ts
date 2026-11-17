@@ -14,6 +14,9 @@ import type { Song } from '@/types/song';
  *
  * Date added: ascending = oldest first, descending = newest first.
  * Ties (same title or same date) are broken by title, then by id, so the order is always the same.
+ *
+ * Most played: descending = most played first, ascending = least played first.
+ * Ties (same count) are always by title A–Z, then by id, in both orders.
  */
 
 // Basic Latin letters + accented Latin letters (À–ɏ).
@@ -52,15 +55,34 @@ function compareIds(a: Song, b: Song): number {
   return englishCollator.compare(a.id, b.id);
 }
 
+function compareByTitle(a: Song, b: Song): number {
+  return compareTitles(a.title, b.title) || compareIds(a, b);
+}
+
 function compareAscending(a: Song, b: Song, sortBy: SortBy): number {
   if (sortBy === 'dateAdded' && a.dateAdded !== b.dateAdded) {
     return a.dateAdded - b.dateAdded;
   }
-  return compareTitles(a.title, b.title) || compareIds(a, b);
+  return compareByTitle(a, b);
 }
 
-/** Returns a new sorted array. The original array is not changed. */
-export function sortSongs(songs: readonly Song[], sortBy: SortBy, order: SortOrder): Song[] {
+const noPlays = () => 0;
+
+/**
+ * Returns a new sorted array. The original array is not changed.
+ * `getPlayCount` is only used for 'mostPlayed'.
+ */
+export function sortSongs(
+  songs: readonly Song[],
+  sortBy: SortBy,
+  order: SortOrder,
+  getPlayCount: (songId: string) => number = noPlays,
+): Song[] {
   const direction = order === 'asc' ? 1 : -1;
+  if (sortBy === 'mostPlayed') {
+    return [...songs].sort(
+      (a, b) => direction * (getPlayCount(a.id) - getPlayCount(b.id)) || compareByTitle(a, b),
+    );
+  }
   return [...songs].sort((a, b) => direction * compareAscending(a, b, sortBy));
 }

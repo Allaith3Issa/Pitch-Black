@@ -69,7 +69,7 @@ real titles and artists from MediaStore tags.
       live as you type, results count
 - [x] SongRow subtitle: artist and "• 3:45" as separate texts (mixed Arabic/English artists kept the duration
       in the middle); the duration always stays visible
-- [x] Titles that repeat the artist ("Artist - Title") show only the title (`stripArtistPrefix`)
+- [x] Titles that repeat the artist ("Artist - Title") show only the title (`stripArtistPrefix`, renamed `stripArtistName` in Step 4C)
 - [x] Unit tests (jest-expo) for the pure utils; `npm test` added to "Finishing a step"
 
 > **From the full review:** also apply the Kotlin fixes in `modules/media-store` — look up the column indexes once
@@ -129,7 +129,28 @@ a restart, System follows the phone setting, nothing is hardcoded.
 ✅ Verified on device: theme and accent switch the whole app instantly and survive a restart, System follows
 the phone. Only open point: the navigation bar buttons in Light mode (see Step 6).
 
-## Step 4C — (scope comes with Allaith's Step 4C prompt)
+## Step 4C — Play count + auto refresh
+JS only, no native packages.
+- [x] Stable song key: id + fallback key (filename + rounded duration). Saved data is re-matched on every load:
+      by id first, then by the fallback key (`utils/songKey`, reused in Step 7)
+- [x] `playCountStore` (persisted): counts per song. A play counts after 30 s of real listening (or half of a
+      shorter song), once per play-through; pause/resume and seeking do not cheat (`utils/listenTracker`).
+      A new play-through: song loaded, restart via "previous", repeat-one (Step 5)
+- [x] SongRow subtitle "Artist • 3:45 • ▶ 12" (count only when > 0, separate texts, artist truncates first)
+- [x] Sort "Most played" (Descending = most first, ties by title A–Z; picking it switches to Descending) in the
+      Sort sheet and the chip label; the order is frozen while the screen is focused, the count in the row
+      updates live
+- [x] Title cleanup: " _ " is a separator like " - ", the artist is also removed from the **end** of the title
+      (`stripArtistName`, was `stripArtistPrefix`)
+- [x] Auto refresh when the app comes back to the foreground: quiet rescan (no spinner, playing song keeps
+      playing, scroll position stays), at most once every 5 s
+- [x] Tests for the pure logic; DESIGN.md (SongRow, Sort sheet) updated
+
+**Done when (on the CURRENT build):** counts go up after real listening, "Most played" sorts correctly,
+a song downloaded while the app is in the background appears when I come back.
+✅ Verified on device: counts go up after real listening (not before 30 s, not twice after pause, again after
+restart), "Most played" sorts correctly and keeps its order while on screen, counts survive a restart,
+a song added in the background appears on return without a spinner, " _ Artist" title cleanup works.
 
 ## Step 5 — Now Playing & Mini Player
 Step 5: slider already in the Step 4 dev build.
@@ -233,3 +254,4 @@ something for that build.
 ## Ideas for later
 Not planned for now.
 - Set a song as ringtone / notification sound
+- Run Prettier on the whole project, in one separate commit (style only, no code changes)

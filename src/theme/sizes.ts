@@ -48,6 +48,8 @@ export const iconStrokes = {
 } as const;
 
 export const iconSizes = {
+  /** Small icon inside a line of text (play count in a SongRow). */
+  inline: 12,
   /** Chip icon. */
   xs: 16,
   sm: 18,

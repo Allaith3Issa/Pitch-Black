@@ -84,3 +84,33 @@ describe('sortSongs by date added', () => {
     expect(sortSongs(sameDate, 'dateAdded', 'asc').map((s) => s.id)).toEqual(['1', '2', '3']);
   });
 });
+
+describe('sortSongs by most played', () => {
+  const counts: Record<string, number> = { '1': 5, '2': 12, '3': 0, '4': 5 };
+  const getPlayCount = (id: string) => counts[id] ?? 0;
+  const songs = [song('1', 'Bravo'), song('2', 'Most'), song('3', 'Never'), song('4', 'Alpha'), song('5', 'New')];
+
+  it('descending = most played first, ties by title A–Z', () => {
+    expect(titles(sortSongs(songs, 'mostPlayed', 'desc', getPlayCount))).toEqual([
+      'Most',
+      'Alpha',
+      'Bravo',
+      'Never',
+      'New',
+    ]);
+  });
+
+  it('ascending = least played first, ties still by title A–Z', () => {
+    expect(titles(sortSongs(songs, 'mostPlayed', 'asc', getPlayCount))).toEqual([
+      'Never',
+      'New',
+      'Alpha',
+      'Bravo',
+      'Most',
+    ]);
+  });
+
+  it('without counts, every song has 0 plays and the order is by title', () => {
+    expect(titles(sortSongs(songs, 'mostPlayed', 'desc'))).toEqual(['Alpha', 'Bravo', 'Most', 'Never', 'New']);
+  });
+});
