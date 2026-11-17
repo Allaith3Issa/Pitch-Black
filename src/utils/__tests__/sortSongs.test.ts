@@ -9,6 +9,7 @@ function song(id: string, title: string, dateAdded = 0): Song {
     id,
     title,
     dateAdded,
+    dateModified: 0,
     artist: null,
     album: null,
     albumId: null,

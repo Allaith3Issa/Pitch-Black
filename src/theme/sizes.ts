@@ -70,6 +70,8 @@ export const sizes = {
   /** Settings row with a subtitle (Figma 12b: 62) and without one (46). */
   settingsRow: 62,
   settingsRowCompact: 46,
+  /** Label column in the Song info sheet, so all values start at the same place. */
+  infoLabel: 88,
 } as const;
 
 // Icon line thickness (lucide strokeWidth). The active tab icon is bolder.

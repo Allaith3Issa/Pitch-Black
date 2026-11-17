@@ -1,10 +1,11 @@
-import { Heart, HeartOff, ListMinus, ListPlus } from 'lucide-react-native';
+import { Heart, HeartOff, Info, ListMinus, ListPlus, Share2 } from 'lucide-react-native';
 import { Text, ToastAndroid, View } from 'react-native';
 
 import AppText from '@/components/AppText';
 import Artwork from '@/components/Artwork';
 import SheetOption from '@/components/SheetOption';
 import { useIsFavorite } from '@/hooks/useIsFavorite';
+import { shareSongFile } from '@/services/mediaLibrary';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { usePlaylistStore } from '@/store/playlistStore';
 import { fonts, makeStyles, sizes, spacing, typography } from '@/theme';
@@ -16,11 +17,13 @@ type SongOptionsViewProps = {
   /** Set on Playlist Detail: also offers "Remove from playlist". */
   playlistId?: string;
   onAddToPlaylist: () => void;
+  /** Switches the sheet to Song info. */
+  onShowInfo: () => void;
   onClose: () => void;
 };
 
-/** Song Options (design screen 04): song header, favorites, add to playlist. Song info and Share come in Step 6. */
-export default function SongOptionsView({ song, playlistId, onAddToPlaylist, onClose }: SongOptionsViewProps) {
+/** Song Options (design screen 04): song header, favorites, add to playlist, song info, share. */
+export default function SongOptionsView({ song, playlistId, onAddToPlaylist, onShowInfo, onClose }: SongOptionsViewProps) {
   const styles = useStyles();
   const isFavorite = useIsFavorite(song.id);
   const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
@@ -40,10 +43,15 @@ export default function SongOptionsView({ song, playlistId, onAddToPlaylist, onC
     onClose();
   };
 
+  const onShare = () => {
+    onClose();
+    shareSongFile(song).catch(() => ToastAndroid.show('Could not share this song', ToastAndroid.SHORT));
+  };
+
   return (
     <View>
       <View style={styles.header}>
-        <Artwork size={sizes.artworkRow} />
+        <Artwork song={song} size={sizes.artworkRow} />
         <View style={styles.texts}>
           <AppText style={styles.title} numberOfLines={1}>
             {song.title}
@@ -69,6 +77,8 @@ export default function SongOptionsView({ song, playlistId, onAddToPlaylist, onC
       {playlistId !== undefined && (
         <SheetOption label="Remove from playlist" icon={ListMinus} onPress={onRemoveFromPlaylist} />
       )}
+      <SheetOption label="Song info" icon={Info} onPress={onShowInfo} />
+      <SheetOption label="Share" icon={Share2} onPress={onShare} />
     </View>
   );
 }

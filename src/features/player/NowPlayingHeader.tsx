@@ -10,10 +10,12 @@ type NowPlayingHeaderProps = {
   /** Where the queue comes from, e.g. "All songs". */
   queueTitle: string;
   onClose: () => void;
+  /** Opens the song options (favorites, playlists, song info, share). */
+  onMore: () => void;
 };
 
 /** Top bar of Now Playing: close, "NOW PLAYING / All songs", more options. */
-export default function NowPlayingHeader({ queueTitle, onClose }: NowPlayingHeaderProps) {
+export default function NowPlayingHeader({ queueTitle, onClose, onMore }: NowPlayingHeaderProps) {
   const styles = useStyles();
   const { colors } = useTheme();
 
@@ -30,8 +32,11 @@ export default function NowPlayingHeader({ queueTitle, onClose }: NowPlayingHead
           {queueTitle}
         </AppText>
       </View>
-      {/* The song menu (info, share) gets its action in Step 6. */}
-      <IconButton icon={<Ellipsis color={colors.text} size={iconSizes.md} />} accessibilityLabel="More options" />
+      <IconButton
+        icon={<Ellipsis color={colors.text} size={iconSizes.md} />}
+        accessibilityLabel="More options"
+        onPress={onMore}
+      />
     </View>
   );
 }

@@ -37,7 +37,7 @@ export default function MiniPlayer() {
           accessibilityRole="button"
           accessibilityLabel={`Open Now Playing: ${song.title}`}
         >
-          <Artwork size={sizes.artworkMini} />
+          <Artwork song={song} size={sizes.artworkMini} />
           <View style={styles.texts}>
             <AppText style={styles.title} numberOfLines={1}>
               {song.title}

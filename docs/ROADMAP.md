@@ -1,4 +1,4 @@
-# B4F Player — Roadmap
+# Pitch Black — Roadmap
 
 Work on **one step at a time**. A step is done only when every "Done when" item is true
 and the app runs on a real Android phone: with **Expo Go** until Step 2B,
@@ -6,7 +6,7 @@ then with the **development build** (from Step 2B on).
 
 Status: `[ ]` not started · `[x]` done
 
-**Order from Step 4B on:** 4B → 4C → 5 → 7 → 8 → 8B → 6 → (one new dev build) → 9 → 10.
+**Order from Step 4B on:** 4B → 4C → 5 → 7 → 8 → 8B → 6 → (one new dev build) → 6B → 9 → 10.
 **Until Step 6: no new native packages.** All native work is collected in Step 6. If a step seems to need a
 native package, stop and ask Allaith first. What to test after that build: see "Next build checklist" at the end.
 
@@ -221,23 +221,25 @@ JS only (the font package adds font files and JS, no new build).
 **Done when (on the CURRENT build):** Arabic titles, artists and playlist names use Plex Arabic in the right weight,
 no marks are cut off, the artist stays aligned with " • 3:45", Latin text looks unchanged.
 
-## Step 6 — Covers, song info, share, navigation bar (all native work)
+## Step 6 — Covers, song info, share, navigation bar, new identity (all native work)
 Step 6 collects **all** native work, so there is only one new dev build (after this step).
-- [ ] Cover from the audio file itself first (embedded artwork), cached in the app
-- [ ] Show covers in SongRow, Mini Player, Now Playing
-- [ ] Songs with no cover: colored placeholder with the first letter of the title
-- [ ] First find which free cover sources (no API key) work from my network — test them before building on them
-- [ ] No cover → a "Search for a cover" button **only on Now Playing**, on top of the artwork placeholder:
-      searches online by artist + title, shows several options, I pick one
-- [ ] A chosen cover is saved in the **app cache only** (never written into the audio file)
-- [ ] After a cover is chosen, Now Playing also offers "Change cover" / "Remove cover"
-- [ ] Respect the "Download covers on Wi-Fi only" setting (Step 8; default on)
-- [ ] Song info sheet from the "⋯" menu: title, artist, album, duration, filename, folder, size, format,
+The build also contains everything Step 6B (online covers) and Step 9 (background playback) need natively.
+- [x] New identity "Pitch Black": package `com.allaith.pitchblack`, scheme `pitchblack`, black adaptive icon background,
+      Kotlin namespace `com.allaith.pitchblack.mediastore`. A new package = a new app on the phone (old data is not moved).
+- [x] Permissions: only audio reading + what playback needs. Blocked: WRITE_EXTERNAL_STORAGE, READ_MEDIA_VISUAL_USER_SELECTED,
+      READ_MEDIA_IMAGES / VIDEO, CAMERA, RECORD_AUDIO. The gallery uses the Android Photo Picker (no permission)
+- [x] Cover from the audio file itself first (embedded artwork), cached in the app
+- [x] Show covers in SongRow, Mini Player, Now Playing
+- [x] Songs with no cover: colored placeholder with the first letter of the title
+- [x] Covers load without stutter: at most 3 reads at a time, newest first, rows that scrolled away are skipped,
+      each cover read only once (`utils/requestQueue`)
+- [x] "⋯" on Now Playing opens the same Song Options sheet for the current song
+- [x] Song info sheet from the "⋯" menu: title, artist, album, duration, filename, folder, size, format,
       bitrate, date added
-- [ ] Share from the "⋯" menu: Android share sheet with the audio file itself
-- [ ] Custom playlist cover from the phone's gallery (`expo-image-picker`), copied into the app's own storage
+- [x] Share from the "⋯" menu: Android share sheet with the audio file itself
+- [x] Custom playlist cover from the phone's gallery (`expo-image-picker`), copied into the app's own storage
       (so it survives if the original photo is deleted), with "Change cover" / "Remove cover" (Playlist Detail "⋯")
-- [ ] Light mode navigation bar buttons (found in Step 4B — light buttons on white). Exact solution:
+- [x] Light mode navigation bar buttons (found in Step 4B — light buttons on white). Exact solution:
       - `npx expo install expo-navigation-bar`
       - in `app.json` plugins: `["expo-navigation-bar", { "enforceContrast": false, "style": "light" }]`
         (`enforceContrast: false` = fully transparent bar, so the style is not ignored on 3-button navigation;
@@ -246,18 +248,36 @@ Step 6 collects **all** native work, so there is only one new dev build (after t
         (import `{ NavigationBar }` from `expo-navigation-bar`; the component, not the deprecated top-level `setStyle`)
       - the style is the **button** color: `'light'` = light buttons (OLED), `'dark'` = dark buttons (Light)
       - check 3-button mode: the tab bar and Mini Player stay clear of the buttons
+- [x] Native packages for 6B and 9 already in this build: `expo-image`, `expo-file-system`, `expo-network` (Wi-Fi check);
+      `POST_NOTIFICATIONS` declared for the media notification (Step 9)
 
 **Then: one new dev build** → go through the "Next build checklist" below.
+✅ Verified on device (preview APK): new identity and permissions, embedded covers + letter covers, song info,
+share, Now Playing "⋯", playlist gallery covers, navigation bar in both themes and 3-button mode.
+Open point: blank areas / stutter when scrolling fast in the release APK → Step 6C.
+
+## Step 6B — Online cover search
+JS only, on the Step 6 build (`expo-image`, `expo-file-system`, `expo-network` are already in it).
+- [ ] First find which free cover sources (no API key) work from my network — test them before building on them
+- [ ] No cover → a "Search for a cover" button **only on Now Playing**, on top of the artwork placeholder:
+      searches online by artist + title, shows several options, I pick one
+- [ ] A chosen cover is saved in the **app cache only** (never written into the audio file); it wins over the
+      embedded cover and the letter cover
+- [ ] After a cover is chosen, Now Playing also offers "Change cover" / "Remove cover"
+- [ ] Respect the "Download covers on Wi-Fi only" setting (Step 8; default on) with `expo-network`
 
 ## Step 9 — Background playback
-`enableBackgroundPlayback` is already on in the `expo-audio` plugin since the Step 4 dev build, so this step may be
-JS only (`shouldPlayInBackground`, `setActiveForLockScreen`). Check that first.
+JS only (checked in Step 6, the Step 6 build has everything): `enableBackgroundPlayback` adds the media playback
+foreground service + `FOREGROUND_SERVICE_MEDIA_PLAYBACK`, and `POST_NOTIFICATIONS` is declared (expo-audio only adds it
+for recording). In JS: `setAudioModeAsync({ shouldPlayInBackground: true, interruptionMode: 'doNotMix' })`,
+`player.setActiveForLockScreen(true, metadata, { showNextTrack, showPreviousTrack })` (without it Android stops the audio
+after ~3 min in the background), `requestNotificationPermissionsAsync()` on Android 13+, cover as `artworkUrl`.
 - [ ] Background playback (`expo-audio`)
 - [ ] Media notification + lock screen controls
 - [ ] Re-test everything on the dev build
 
 ## Step 10 — Polish & release
-- [ ] App icon + splash screen (black, B4F Player)
+- [ ] App icon + splash screen (black, Pitch Black)
 - [ ] Clean up code, final lint/typecheck
 - [ ] README: screenshots, features, tech stack, how to run
 - [ ] Build the final APK
@@ -270,14 +290,19 @@ JS only (`shouldPlayInBackground`, `setActiveForLockScreen`). Check that first.
 ## Next build checklist
 What to test on the phone after the next dev build (end of Step 6). Add to it whenever a step leaves
 something for that build.
-- [ ] Navigation bar buttons: light on OLED, dark on Light, switch instantly, follow the phone on System
-- [ ] Navigation bar in **3-button mode** and gesture mode: no gray band, tab bar and Mini Player stay clear
+- [x] Navigation bar buttons: light on OLED, dark on Light, switch instantly, follow the phone on System
+- [x] Navigation bar in **3-button mode** and gesture mode: no gray band, tab bar and Mini Player stay clear
       of the buttons, buttons readable in both themes
-- [ ] Cold start in Light mode: buttons may be light for a moment before JS runs (plugin starts with "light")
-- [ ] `userInterfaceStyle: "automatic"` (Step 4B): System theme still follows the phone; OLED / Light still forced
-- [ ] All Step 6 native features (covers, song info, share) on the new build
-- [ ] Playlist cover from the gallery: pick, survives deleting the original photo, Change / Remove cover
-- [ ] Quick re-test of everything before: playback, sorting, search, themes, favorites, playlists, settings
+- [x] Cold start in Light mode: buttons may be light for a moment before JS runs (plugin starts with "light")
+- [x] `userInterfaceStyle: "automatic"` (Step 4B): System theme still follows the phone; OLED / Light still forced
+- [x] Uninstall the old "B4F Player" app (different package); Pitch Black starts with empty playlists / favorites
+- [x] App name, icon (black background) and splash on the new build
+- [x] Settings → Apps → Pitch Black → Permissions: only Music and audio (+ Notifications); no Photos, Camera, Microphone
+- [x] All Step 6 native features (covers, song info, share) on the new build
+- [ ] Covers: fast scrolling through the whole list stays smooth; letter covers for songs without art
+- [x] Share: send a song to another app (e.g. a chat app) and check it arrives as an audio file
+- [x] Playlist cover from the gallery: pick, survives deleting the original photo, Change / Remove cover
+- [x] Quick re-test of everything before: playback, sorting, search, themes, favorites, playlists, settings
 
 ---
 

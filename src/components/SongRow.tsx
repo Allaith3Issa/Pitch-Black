@@ -33,7 +33,7 @@ function SongRow({ song, index, isCurrent, onPress, onMore }: SongRowProps) {
       accessibilityLabel={isCurrent ? `${song.title}, now playing` : song.title}
       style={({ pressed }) => [styles.row, isCurrent && styles.rowCurrent, pressed && styles.pressed]}
     >
-      <Artwork size={sizes.artworkRow} />
+      <Artwork song={song} size={sizes.artworkRow} />
       <View style={styles.texts}>
         <AppText style={[styles.title, isCurrent && styles.titleCurrent]} numberOfLines={1}>
           {song.title}

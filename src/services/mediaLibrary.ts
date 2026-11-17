@@ -6,7 +6,7 @@ import {
 } from 'expo-media-library';
 
 import type { AudioPermission } from '@/types/permission';
-import type { Song } from '@/types/song';
+import type { Song, SongFileDetails } from '@/types/song';
 import { parseSongFilename } from '@/utils/parseSongFilename';
 import { stripArtistName } from '@/utils/stripArtistName';
 import MediaStore, { type MediaStoreAudioFile } from '@modules/media-store';
@@ -69,6 +69,7 @@ function toSong(file: MediaStoreAudioFile): Song {
     durationSec: file.durationMs / 1000,
     filename: file.filename,
     dateAdded: file.dateAdded,
+    dateModified: file.dateModified,
   };
 }
 
@@ -77,4 +78,14 @@ export async function loadAllSongs(): Promise<Song[]> {
   // MediaStore already skips shorter files, so they are never sent to JS.
   const files = await MediaStore.getAudioFilesAsync(MIN_SONG_DURATION_SEC * 1000);
   return files.map(toSong);
+}
+
+/** Size, format, folder and bitrate of a song's file (Song info sheet). */
+export function loadSongFileDetails(songId: string): Promise<SongFileDetails> {
+  return MediaStore.getAudioDetailsAsync(songId);
+}
+
+/** Opens the Android share sheet with the song's audio file. */
+export function shareSongFile(song: Song): Promise<void> {
+  return MediaStore.shareAudioAsync(song.id, song.title);
 }

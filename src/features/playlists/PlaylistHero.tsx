@@ -29,7 +29,12 @@ export default function PlaylistHero({ playlist, songs, missingCount, queueSourc
   return (
     <View>
       <View style={styles.hero}>
-        <PlaylistCover size={sizes.playlistCoverHero} iconSize={iconSizes.playlistHero} borderRadius={radius.lg} />
+        <PlaylistCover
+          size={sizes.playlistCoverHero}
+          iconSize={iconSizes.playlistHero}
+          borderRadius={radius.lg}
+          imageUri={playlist.coverUri}
+        />
         <View style={styles.info}>
           <Text style={styles.label}>PLAYLIST</Text>
           <AppText style={styles.name} numberOfLines={2}>

@@ -14,6 +14,7 @@ function song(id: string, title = `Song ${id}`): Song {
     uri: `content://media/external/audio/media/${id}`,
     filename: `${title}.mp3`,
     dateAdded: 0,
+    dateModified: 0,
   };
 }
 

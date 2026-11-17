@@ -11,6 +11,7 @@ const SONG_FIELDS = Object.keys({
   uri: true,
   filename: true,
   dateAdded: true,
+  dateModified: true,
 } satisfies Record<keyof Song, true>) as (keyof Song)[];
 
 function isSameSong(a: Song, b: Song): boolean {

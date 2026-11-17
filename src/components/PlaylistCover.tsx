@@ -1,4 +1,6 @@
+import { Image } from 'expo-image';
 import { ListMusic, type LucideIcon } from 'lucide-react-native';
+import { useState } from 'react';
 import { View } from 'react-native';
 
 import { useTheme } from '@/hooks/useTheme';
@@ -17,18 +19,34 @@ type PlaylistCoverProps = {
    * - `dashed`: dashed outline ("Create playlist" tile on the Playlists tab)
    */
   variant?: 'default' | 'accent' | 'dashed';
+  /** A cover chosen from the gallery. Shown instead of the icon. */
+  imageUri?: string;
 };
 
-/** Square cover with an icon, for playlists and the "create" / "add" tiles. */
+/** Square cover for playlists (the chosen image, or an icon) and the "create" / "add" tiles. */
 export default function PlaylistCover({
   size,
   iconSize,
   borderRadius,
   icon: Icon = ListMusic,
   variant = 'default',
+  imageUri,
 }: PlaylistCoverProps) {
   const styles = useStyles();
   const { colors } = useTheme();
+  // A cover file that cannot be shown falls back to the icon.
+  const [failedUri, setFailedUri] = useState<string | null>(null);
+
+  if (imageUri && imageUri !== failedUri) {
+    return (
+      <Image
+        source={{ uri: imageUri }}
+        style={[styles.default, { width: size, height: size, borderRadius }]}
+        contentFit="cover"
+        onError={() => setFailedUri(imageUri)}
+      />
+    );
+  }
 
   return (
     <View style={[styles.cover, styles[variant], { width: size, height: size, borderRadius }]}>

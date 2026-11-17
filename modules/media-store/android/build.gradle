@@ -3,11 +3,11 @@ plugins {
   id 'expo-module-gradle-plugin'
 }
 
-group = 'com.allaith.b4fplayer.mediastore'
+group = 'com.allaith.pitchblack.mediastore'
 version = '0.1.0'
 
 android {
-  namespace "com.allaith.b4fplayer.mediastore"
+  namespace "com.allaith.pitchblack.mediastore"
   defaultConfig {
     versionCode 1
     versionName "0.1.0"

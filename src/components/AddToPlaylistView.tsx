@@ -52,7 +52,14 @@ export default function AddToPlaylistView({ song }: AddToPlaylistViewProps) {
         title={item.name}
         subtitle={hasSong ? `${count} · already added` : count}
         height={sizes.songRow}
-        cover={<PlaylistCover size={sizes.artworkRow} iconSize={iconSizes.option} borderRadius={radius.md} />}
+        cover={
+          <PlaylistCover
+            size={sizes.artworkRow}
+            iconSize={iconSizes.option}
+            borderRadius={radius.md}
+            imageUri={item.coverUri}
+          />
+        }
         onPress={() => (hasSong ? removeSong(item.id, song.id) : addSongs(item.id, [song]))}
         accessibilityState={{ checked: hasSong }}
         right={

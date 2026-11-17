@@ -16,6 +16,7 @@ function song(id: string, filename: string, durationSec = 200): Song {
     uri: `content://media/${id}`,
     filename,
     dateAdded: 0,
+    dateModified: 0,
   };
 }
 

@@ -3,6 +3,7 @@ import { Animated, type LayoutChangeEvent, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Artwork from '@/components/Artwork';
+import SongActionsSheet from '@/components/SongActionsSheet';
 import NowPlayingHeader from '@/features/player/NowPlayingHeader';
 import NowPlayingTitle from '@/features/player/NowPlayingTitle';
 import PlayerControls from '@/features/player/PlayerControls';
@@ -12,6 +13,7 @@ import { useNowPlayingSheet } from '@/hooks/useNowPlayingSheet';
 import { usePlayerStore } from '@/store/playerStore';
 import { usePlaylistStore } from '@/store/playlistStore';
 import { makeStyles, radius, sizes, spacing } from '@/theme';
+import type { Song } from '@/types/song';
 import { getQueueTitle } from '@/utils/queueSource';
 
 /**
@@ -28,6 +30,8 @@ export default function NowPlaying() {
   // The artwork fills the space left above the title (296 like in Figma, smaller on small screens),
   // so the controls always fit without scrolling. 0 until the space is measured.
   const [artworkSize, setArtworkSize] = useState(0);
+  // The song whose options are open ("⋯"), or `null`.
+  const [optionsSong, setOptionsSong] = useState<Song | null>(null);
 
   const measureArtworkArea = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
@@ -44,10 +48,10 @@ export default function NowPlaying() {
       <SafeAreaView style={styles.sheet} edges={['top', 'bottom']}>
         {song !== null && (
           <>
-            <NowPlayingHeader queueTitle={queueTitle} onClose={close} />
+            <NowPlayingHeader queueTitle={queueTitle} onClose={close} onMore={() => setOptionsSong(song)} />
             <View style={styles.content}>
               <View style={styles.artworkArea} onLayout={measureArtworkArea}>
-                {artworkSize > 0 && <Artwork size={artworkSize} borderRadius={radius.xl} />}
+                {artworkSize > 0 && <Artwork song={song} size={artworkSize} borderRadius={radius.xl} />}
               </View>
               <NowPlayingTitle song={song} />
               <SeekBar />
@@ -56,6 +60,7 @@ export default function NowPlaying() {
           </>
         )}
       </SafeAreaView>
+      <SongActionsSheet song={optionsSong} onClose={() => setOptionsSong(null)} />
     </Animated.View>
   );
 }

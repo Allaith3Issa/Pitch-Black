@@ -25,6 +25,7 @@ function song(id: string, durationSec = 200): Song {
     uri: `content://media/${id}`,
     filename: `${id}.mp3`,
     dateAdded: 0,
+    dateModified: 0,
   };
 }
 

@@ -44,7 +44,14 @@ export default function PlaylistList() {
       title={item.name}
       subtitle={formatSongCount(countAvailableSongs(item.songs, songsById))}
       height={sizes.playlistRow}
-      cover={<PlaylistCover size={sizes.playlistCoverRow} iconSize={iconSizes.playlistRow} borderRadius={radius.md} />}
+      cover={
+        <PlaylistCover
+          size={sizes.playlistCoverRow}
+          iconSize={iconSizes.playlistRow}
+          borderRadius={radius.md}
+          imageUri={item.coverUri}
+        />
+      }
       onPress={() => openPlaylist(item.id)}
       right={
         <IconButton

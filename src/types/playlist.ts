@@ -11,4 +11,6 @@ export type Playlist = {
   createdAt: number;
   /** In play order. A song is in a playlist at most once. */
   songs: SongRef[];
+  /** A cover chosen from the gallery (a file in the app's storage, see services/playlistCover). */
+  coverUri?: string;
 };

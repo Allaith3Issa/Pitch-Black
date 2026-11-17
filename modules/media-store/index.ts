@@ -12,7 +12,20 @@ export type MediaStoreAudioFile = {
   durationMs: number;
   /** Milliseconds since epoch. */
   dateAdded: number;
+  /** Milliseconds since epoch. Changes when the file (e.g. its tags or cover) changes. */
+  dateModified: number;
   filename: string;
+};
+
+/** Extra file details for the Song info sheet. `null` when Android does not know the value. */
+export type MediaStoreAudioDetails = {
+  sizeBytes: number | null;
+  /** E.g. "audio/mpeg". */
+  mimeType: string | null;
+  /** E.g. "Music/Downloads". */
+  folder: string | null;
+  /** Bits per second. */
+  bitrate: number | null;
 };
 
 declare class MediaStoreModule extends NativeModule {
@@ -21,6 +34,15 @@ declare class MediaStoreModule extends NativeModule {
    * Rejects with code `ERR_MISSING_AUDIO_PERMISSION` or `ERR_MEDIA_STORE_QUERY`.
    */
   getAudioFilesAsync(minDurationMs: number): Promise<MediaStoreAudioFile[]>;
+  /** Rejects with `ERR_AUDIO_FILE_NOT_FOUND` when the file is gone. */
+  getAudioDetailsAsync(id: string): Promise<MediaStoreAudioDetails>;
+  /**
+   * The embedded cover, scaled to `sizePx` and cached in the app cache, as a `file://` URI.
+   * `null` when the file has no cover.
+   */
+  getCoverAsync(id: string, dateModified: number, sizePx: number): Promise<string | null>;
+  /** Opens the Android share sheet with the audio file. */
+  shareAudioAsync(id: string, title: string): Promise<void>;
 }
 
 // Android only (this app does not support other platforms).

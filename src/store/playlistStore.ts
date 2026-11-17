@@ -19,6 +19,8 @@ type PlaylistState = {
   /** Adds songs at the end; songs already in the playlist are skipped. */
   addSongs: (id: string, songs: readonly Song[]) => void;
   removeSong: (id: string, songId: string) => void;
+  /** Sets the cover file, or removes it with `undefined`. Deleting the old file is up to the caller. */
+  setCover: (id: string, coverUri: string | undefined) => void;
   /** Moves songs to their new id when their MediaStore id changed (see utils/songKey). */
   rematch: (songs: readonly Song[]) => void;
 };
@@ -56,6 +58,8 @@ export const usePlaylistStore = create<PlaylistState>()(
 
         removeSong: (id, songId) =>
           update(id, (playlist) => ({ ...playlist, songs: removeSongRef(playlist.songs, songId) })),
+
+        setCover: (id, coverUri) => update(id, (playlist) => ({ ...playlist, coverUri })),
 
         rematch: (songs) => {
           const playlists = get().playlists;

@@ -30,7 +30,7 @@ function SelectableSongRow({ song, checked, disabled, onPress }: SelectableSongR
       accessibilityState={{ checked, disabled }}
       style={({ pressed }) => [styles.row, pressed && styles.pressed]}
     >
-      <Artwork size={sizes.artworkRow} />
+      <Artwork song={song} size={sizes.artworkRow} />
       <View style={[styles.texts, disabled && styles.dimmed]}>
         <AppText style={styles.title} numberOfLines={1}>
           {song.title}
