@@ -198,13 +198,13 @@ back, queue title follows the list and a rename, the playing song switches lists
 Shuffle button works as a toggle.
 
 ## Step 8 — Settings
-- [ ] Settings screen (screen 12)
-- [ ] Rescan music library (+ "Last scan" time)
-- [ ] Default sort (opens the Sort sheet)
-- [ ] Resume last song on start (toggle, saved)
-- [ ] "Download covers on Wi-Fi only" (toggle, default on — saved now, used by covers in Step 6)
-- [ ] Skip buttons: on/off + seconds (5 / 10 / 15 / 30)
-- [ ] About: app name + version from `app.json`
+- [x] Settings screen (screen 12)
+- [x] Rescan music library (+ "Last scan" time)
+- [x] Default sort (opens the Sort sheet)
+- [x] Resume last song on start (toggle, saved)
+- [x] "Download covers on Wi-Fi only" (toggle, default on — saved now, used by covers in Step 6)
+- [x] Skip buttons: on/off + seconds (5 / 10 / 15 / 30)
+- [x] About: app name + version from `app.json`
 
 > **From the full review:** rescan needs a separate `isRefreshing` flag — don't replace the list with a spinner.
 

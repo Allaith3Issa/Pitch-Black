@@ -6,6 +6,7 @@ import { usePlaybackProgressStore } from '@/store/playbackProgressStore';
 import { createPlayerEngine } from '@/store/playerEngine';
 import { useSettingsStore } from '@/store/settingsStore';
 import type { QueueSource } from '@/types/player';
+import type { RestoredSession } from '@/utils/lastSession';
 import { randomIndex, shuffleIds } from '@/utils/shuffle';
 import { getSkipTarget } from '@/utils/skip';
 
@@ -35,6 +36,8 @@ export type PlayerState = {
    * (same position); `index` is its place in `ids`.
    */
   switchQueue: (ids: string[], index: number, source: QueueSource) => void;
+  /** "Resume last song": loads the saved queue and song, paused at the saved position. Never plays. */
+  restoreSession: (session: RestoredSession) => void;
   /** Shuffle on: the other songs are mixed. Off: back to the list order. The current song keeps playing. */
   toggleShuffle: () => void;
   togglePlay: () => void;
@@ -98,6 +101,13 @@ export const usePlayerStore = create<PlayerState>()((set, get) => {
         currentIndex: shuffle ? 0 : index,
         queueSource: source,
       });
+    },
+
+    restoreSession: ({ listQueue, queue, queueSource, currentIndex, positionSec }) => {
+      if (get().currentIndex !== -1) return;
+      set({ listQueue, queue, queueSource });
+      // The song could not be loaded: start with nothing loaded.
+      if (!engine.restore(currentIndex, positionSec)) engine.clear();
     },
 
     toggleShuffle: () => {

@@ -2,11 +2,12 @@ import { Check, type LucideIcon } from 'lucide-react-native';
 import { Pressable, Text } from 'react-native';
 
 import { useTheme } from '@/hooks/useTheme';
-import { fonts, iconSizes, makeStyles, radius, sizes, spacing, typography } from '@/theme';
+import { fonts, iconSizes, makeStyles, opacity, radius, sizes, spacing, typography } from '@/theme';
 
 type SheetOptionProps = {
   label: string;
-  icon: LucideIcon;
+  /** Leave it out for a text-only option (e.g. "10 seconds" in the Skip by sheet). */
+  icon?: LucideIcon;
   onPress: () => void;
   /**
    * For a choice (e.g. sort): selected = highlighted background + check icon on the right.
@@ -15,7 +16,7 @@ type SheetOptionProps = {
   selected?: boolean;
 };
 
-/** One row in a bottom sheet: icon + label. */
+/** One row in a bottom sheet: icon (optional) + label. */
 export default function SheetOption({ label, icon: Icon, onPress, selected }: SheetOptionProps) {
   const styles = useStyles();
   const { colors } = useTheme();
@@ -28,7 +29,7 @@ export default function SheetOption({ label, icon: Icon, onPress, selected }: Sh
       accessibilityState={selected === undefined ? undefined : { checked: selected }}
       style={({ pressed }) => [styles.row, selected && styles.selected, pressed && styles.pressed]}
     >
-      <Icon color={contentColor} size={iconSizes.option} />
+      {Icon && <Icon color={contentColor} size={iconSizes.option} />}
       <Text style={[styles.label, selected && styles.selectedLabel]}>{label}</Text>
       {selected && <Check color={colors.text} size={iconSizes.option} />}
     </Pressable>
@@ -49,7 +50,7 @@ const useStyles = makeStyles(({ colors }) => ({
     backgroundColor: colors.surface2,
   },
   pressed: {
-    opacity: 0.7,
+    opacity: opacity.pressed,
   },
   label: {
     ...typography.body,

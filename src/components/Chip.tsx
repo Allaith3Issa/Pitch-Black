@@ -2,7 +2,7 @@ import type { LucideIcon } from 'lucide-react-native';
 import { Pressable, Text } from 'react-native';
 
 import { useTheme } from '@/hooks/useTheme';
-import { fonts, iconSizes, makeStyles, radius, sizes, spacing, typography } from '@/theme';
+import { fonts, iconSizes, makeStyles, opacity, radius, sizes, spacing, typography } from '@/theme';
 
 type ChipProps = {
   label: string;
@@ -39,7 +39,7 @@ const useStyles = makeStyles(({ colors }) => ({
     backgroundColor: colors.surface2,
   },
   pressed: {
-    opacity: 0.7,
+    opacity: opacity.pressed,
   },
   label: {
     ...typography.bodySmall,

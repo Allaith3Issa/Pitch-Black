@@ -88,7 +88,7 @@ const useStyles = makeStyles(({ colors }) => ({
     backgroundColor: colors.primarySoft,
   },
   pressed: {
-    opacity: 0.8,
+    opacity: opacity.pressed,
   },
   disabled: {
     opacity: opacity.disabled,

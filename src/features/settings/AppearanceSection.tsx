@@ -3,8 +3,9 @@ import { Text, View } from 'react-native';
 import AccentSwatch from '@/components/AccentSwatch';
 import SectionLabel from '@/components/SectionLabel';
 import SegmentedControl, { type Segment } from '@/components/SegmentedControl';
+import SettingsCard from '@/components/SettingsCard';
 import { useSettingsStore } from '@/store/settingsStore';
-import { makeStyles, radius, screenPadding, spacing, typography } from '@/theme';
+import { makeStyles, spacing, typography } from '@/theme';
 import { ACCENTS, accentColors } from '@/theme/palettes';
 import type { Accent, ThemeMode } from '@/types/theme';
 
@@ -34,7 +35,7 @@ export default function AppearanceSection() {
   return (
     <View>
       <SectionLabel label="Appearance" />
-      <View style={styles.card}>
+      <SettingsCard style={styles.card}>
         <Text style={styles.label}>Theme</Text>
         <SegmentedControl segments={THEME_SEGMENTS} value={themeMode} onChange={setThemeMode} />
 
@@ -50,17 +51,14 @@ export default function AppearanceSection() {
             />
           ))}
         </View>
-      </View>
+      </SettingsCard>
     </View>
   );
 }
 
 const useStyles = makeStyles(({ colors }) => ({
   card: {
-    marginHorizontal: screenPadding,
     padding: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: colors.surface,
   },
   label: {
     ...typography.body,

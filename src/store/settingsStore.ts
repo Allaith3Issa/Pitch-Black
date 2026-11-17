@@ -6,6 +6,7 @@ import type { RepeatMode } from '@/types/player';
 import type { SortBy, SortOrder } from '@/types/sort';
 import type { Accent, ThemeMode } from '@/types/theme';
 import { getNextRepeatMode } from '@/utils/queue';
+import { DEFAULT_SKIP_SECONDS, type SkipSeconds } from '@/utils/skip';
 
 type SettingsState = {
   sortBy: SortBy;
@@ -14,6 +15,13 @@ type SettingsState = {
   accent: Accent;
   shuffle: boolean;
   repeatMode: RepeatMode;
+  /** On app start, load the last song again (paused, at the saved position). */
+  resumeLastSong: boolean;
+  /** Only search for covers on Wi-Fi. Saved now, used by the covers in Step 6. */
+  coversWifiOnly: boolean;
+  /** Show the skip back / skip forward buttons on Now Playing. */
+  skipButtonsEnabled: boolean;
+  skipSeconds: SkipSeconds;
   /** `true` once the saved settings were read from the phone (or reading failed and defaults are used). */
   isHydrated: boolean;
   setSortBy: (sortBy: SortBy) => void;
@@ -23,6 +31,10 @@ type SettingsState = {
   /** Only playerStore calls this: it also changes the order of the queue. */
   setShuffle: (shuffle: boolean) => void;
   cycleRepeatMode: () => void;
+  setResumeLastSong: (resumeLastSong: boolean) => void;
+  setCoversWifiOnly: (coversWifiOnly: boolean) => void;
+  setSkipButtonsEnabled: (skipButtonsEnabled: boolean) => void;
+  setSkipSeconds: (skipSeconds: SkipSeconds) => void;
 };
 
 // Saved on the phone (AsyncStorage), so the choices survive an app restart.
@@ -35,6 +47,10 @@ export const useSettingsStore = create<SettingsState>()(
       accent: 'purple',
       shuffle: false,
       repeatMode: 'off',
+      resumeLastSong: true,
+      coversWifiOnly: true,
+      skipButtonsEnabled: true,
+      skipSeconds: DEFAULT_SKIP_SECONDS,
       isHydrated: false,
       setSortBy: (sortBy) => {
         if (sortBy === get().sortBy) return;
@@ -46,6 +62,10 @@ export const useSettingsStore = create<SettingsState>()(
       setAccent: (accent) => set({ accent }),
       setShuffle: (shuffle) => set({ shuffle }),
       cycleRepeatMode: () => set({ repeatMode: getNextRepeatMode(get().repeatMode) }),
+      setResumeLastSong: (resumeLastSong) => set({ resumeLastSong }),
+      setCoversWifiOnly: (coversWifiOnly) => set({ coversWifiOnly }),
+      setSkipButtonsEnabled: (skipButtonsEnabled) => set({ skipButtonsEnabled }),
+      setSkipSeconds: (skipSeconds) => set({ skipSeconds }),
     }),
     {
       name: 'settings',
@@ -61,6 +81,10 @@ export const useSettingsStore = create<SettingsState>()(
         accent: state.accent,
         shuffle: state.shuffle,
         repeatMode: state.repeatMode,
+        resumeLastSong: state.resumeLastSong,
+        coversWifiOnly: state.coversWifiOnly,
+        skipButtonsEnabled: state.skipButtonsEnabled,
+        skipSeconds: state.skipSeconds,
       }),
       // Runs when reading is done, also after an error. On an error the defaults stay, so the app still opens.
       onRehydrateStorage: () => () => {

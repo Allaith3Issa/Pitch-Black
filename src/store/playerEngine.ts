@@ -30,6 +30,11 @@ export function createPlayerEngine(set: StoreApi<PlayerState>['setState'], get: 
   let pendingSeek: PendingSeek | null = null;
   /** Songs in a row that failed while loading. When every song fails, we stop instead of looping. */
   let failedInARow = 0;
+  /**
+   * A song was restored on app start ("Resume last song") and has not been played since. If it fails
+   * to load meanwhile, we unload it instead of skipping to the next song (that would start playback).
+   */
+  let isRestoredUnplayed = false;
 
   function markCommand() {
     lastCommandAt = Date.now();
@@ -56,14 +61,23 @@ export function createPlayerEngine(set: StoreApi<PlayerState>['setState'], get: 
     set({ isPlaying: false, status });
   }
 
+  /** Nothing loaded: the Mini Player hides. */
+  function clear() {
+    isRestoredUnplayed = false;
+    audio.pause();
+    set({ listQueue: [], queue: [], queueSource: null, currentIndex: -1, status: 'idle', isPlaying: false });
+  }
+
   /** Loads and plays queue[index]. Returns `false` when the song cannot be started. */
   function startSong(index: number): boolean {
     const song = useLibraryStore.getState().songsById[get().queue[index]];
+    isRestoredUnplayed = false;
     markCommand();
     startPlayThrough();
     pendingSeek = null;
-    set({ currentIndex: index, status: 'loading', isPlaying: true });
+    // The position first: saving the session (services/lastSession) reacts to the new song.
     usePlaybackProgressStore.setState({ positionSec: 0, durationSec: song?.durationSec ?? 0 });
+    set({ currentIndex: index, status: 'loading', isPlaying: true });
 
     // The song is no longer in the library (e.g. the file was deleted).
     if (!song) return false;
@@ -131,7 +145,31 @@ export function createPlayerEngine(set: StoreApi<PlayerState>['setState'], get: 
     playFrom(nextIndex);
   }
 
+  /**
+   * Loads queue[index] PAUSED at `positionSec` ("Resume last song" on app start). Never plays.
+   * Returns `false` when the song cannot be loaded.
+   */
+  function restore(index: number, positionSec: number): boolean {
+    const song = useLibraryStore.getState().songsById[get().queue[index]];
+    if (!song) return false;
+    isRestoredUnplayed = true;
+    markCommand();
+    startPlayThrough();
+    pendingSeek = null;
+    // The position first: saving the session (services/lastSession) reacts to the new song.
+    usePlaybackProgressStore.setState({ positionSec, durationSec: song.durationSec });
+    set({ currentIndex: index, status: 'paused', isPlaying: false });
+    try {
+      audio.load(song.uri);
+      if (positionSec > 0) seek(positionSec);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   function play() {
+    isRestoredUnplayed = false;
     markCommand();
     audio.play();
     set({ isPlaying: true, status: 'playing' });
@@ -150,6 +188,10 @@ export function createPlayerEngine(set: StoreApi<PlayerState>['setState'], get: 
     // The native player sends an error only once, in one update.
     if (status.error) {
       if (state.status === 'error') return;
+      if (isRestoredUnplayed) {
+        clear();
+        return;
+      }
       reportFailedSong(state.currentIndex);
       failedInARow += 1;
       if (failedInARow >= state.queue.length) {
@@ -195,5 +237,5 @@ export function createPlayerEngine(set: StoreApi<PlayerState>['setState'], get: 
     }
   }
 
-  return { seek, startQueue, goBack, goNext, play, pause, handleStatus };
+  return { seek, startQueue, restore, clear, goBack, goNext, play, pause, handleStatus };
 }

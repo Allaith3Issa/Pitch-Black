@@ -9,7 +9,6 @@ import { usePlayerStore } from '@/store/playerStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { iconSizes, makeStyles, radius, sizes, spacing } from '@/theme';
 import type { RepeatMode } from '@/types/player';
-import { SKIP_SECONDS } from '@/utils/skip';
 
 const REPEAT_LABELS: Record<RepeatMode, string> = {
   off: 'Repeat: off',
@@ -20,6 +19,7 @@ const REPEAT_LABELS: Record<RepeatMode, string> = {
 /**
  * Now Playing controls.
  * Main row: skip back, previous, play/pause, next, skip forward. Under it: shuffle (left), repeat (right).
+ * The skip buttons can be turned off in Settings: then previous / play / next stay together in the middle.
  */
 export default function PlayerControls() {
   const styles = useStyles();
@@ -33,11 +33,15 @@ export default function PlayerControls() {
   const shuffle = useSettingsStore((state) => state.shuffle);
   const repeatMode = useSettingsStore((state) => state.repeatMode);
   const cycleRepeatMode = useSettingsStore((state) => state.cycleRepeatMode);
+  const skipButtonsEnabled = useSettingsStore((state) => state.skipButtonsEnabled);
+  const skipSeconds = useSettingsStore((state) => state.skipSeconds);
 
   return (
     <View>
-      <View style={styles.mainRow}>
-        <SkipSecondsButton direction="back" seconds={SKIP_SECONDS} onPress={() => skipBy(-SKIP_SECONDS)} />
+      <View style={[styles.mainRow, !skipButtonsEnabled && styles.mainRowNoSkip]}>
+        {skipButtonsEnabled && (
+          <SkipSecondsButton direction="back" seconds={skipSeconds} onPress={() => skipBy(-skipSeconds)} />
+        )}
         <IconButton
           size={sizes.playerSkipSong}
           accessibilityLabel="Previous song"
@@ -64,7 +68,9 @@ export default function PlayerControls() {
           onPress={next}
           icon={<SkipForward color={colors.text} fill={colors.text} size={iconSizes.playerMain} />}
         />
-        <SkipSecondsButton direction="forward" seconds={SKIP_SECONDS} onPress={() => skipBy(SKIP_SECONDS)} />
+        {skipButtonsEnabled && (
+          <SkipSecondsButton direction="forward" seconds={skipSeconds} onPress={() => skipBy(skipSeconds)} />
+        )}
       </View>
 
       <View style={styles.toggleRow}>
@@ -85,6 +91,10 @@ const useStyles = makeStyles(({ colors }) => ({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  mainRowNoSkip: {
+    justifyContent: 'center',
+    gap: spacing.xl,
   },
   playCircle: {
     width: sizes.playButtonLarge,

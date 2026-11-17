@@ -1,5 +1,9 @@
-/** Default jump of the skip back / skip forward buttons. The setting for it comes in Step 8. */
-export const SKIP_SECONDS = 10;
+/** How far the skip back / skip forward buttons jump, in seconds (chosen in Settings). */
+export type SkipSeconds = 5 | 10 | 15 | 30;
+
+export const SKIP_SECONDS_OPTIONS: readonly SkipSeconds[] = [5, 10, 15, 30];
+
+export const DEFAULT_SKIP_SECONDS: SkipSeconds = 10;
 
 /**
  * Where a skip of `deltaSec` (negative = back) lands in the song.

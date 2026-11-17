@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { type AccessibilityState, Pressable, Text, View } from 'react-native';
 
-import { makeStyles, screenPadding, spacing, typography } from '@/theme';
+import { makeStyles, opacity, screenPadding, spacing, typography } from '@/theme';
 
 type PlaylistRowProps = {
   title: string;
@@ -62,7 +62,7 @@ const useStyles = makeStyles(({ colors }) => ({
     paddingRight: spacing.sm,
   },
   pressed: {
-    opacity: 0.7,
+    opacity: opacity.pressed,
   },
   texts: {
     flex: 1,

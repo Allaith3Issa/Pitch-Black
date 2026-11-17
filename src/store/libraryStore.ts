@@ -9,6 +9,7 @@ import type { AppError } from '@/types/error';
 import type { AudioPermission } from '@/types/permission';
 import type { Song } from '@/types/song';
 import { mergeSongs } from '@/utils/mergeSongs';
+import { getSongChanges, type SongChanges } from '@/utils/songChanges';
 import { getErrorCode, toAppError } from '@/utils/toAppError';
 
 export type LibraryStatus = 'idle' | 'loading' | 'ready' | 'error';
@@ -20,6 +21,8 @@ type LibraryState = {
   status: LibraryStatus;
   /** A quiet rescan (refreshSongs) is running. The list stays on screen meanwhile. */
   isRefreshing: boolean;
+  /** When the last scan (full load or quiet rescan) finished, or `null`. Shown in Settings. */
+  lastScanAt: number | null;
   error: AppError | null;
   /** `null` until the first check has finished. */
   permission: AudioPermission | null;
@@ -31,8 +34,17 @@ type LibraryState = {
   checkPermission: () => Promise<void>;
   requestPermission: () => Promise<void>;
   loadSongs: () => Promise<void>;
-  /** Rescans quietly: no spinner, unchanged songs keep their objects (see utils/mergeSongs). */
-  refreshSongs: () => Promise<void>;
+  /**
+   * Rescans quietly: no spinner, unchanged songs keep their objects (see utils/mergeSongs).
+   * If a rescan is already running, returns that one's result instead of starting another.
+   * Returns what changed, or `null` when it did not run (no list yet) or failed.
+   */
+  refreshSongs: () => Promise<SongChanges | null>;
+  /**
+   * "Rescan music library" in Settings: a quiet rescan, or a full load when the last load failed.
+   * Returns what changed, or `null` when it did not run or failed.
+   */
+  rescan: () => Promise<SongChanges | null>;
   skipPermission: () => void;
 };
 
@@ -55,74 +67,102 @@ function toLoadError(error: unknown): AppError {
 // than its result, so it is dropped.
 let fullLoadCount = 0;
 
+// The quiet rescan that is running now, or `null`. A second rescan meanwhile (e.g. "Rescan" in
+// Settings during the auto refresh) waits for this one and gets its result.
+let runningRefresh: Promise<SongChanges | null> | null = null;
+
 function toSongsById(songs: Song[]): Record<string, Song> {
   return Object.fromEntries(songs.map((song) => [song.id, song]));
 }
 
 // Not persisted: the library is scanned again on every app start.
-export const useLibraryStore = create<LibraryState>()((set, get) => ({
-  songs: [],
-  songsById: {},
-  status: 'idle',
-  isRefreshing: false,
-  error: null,
-  permission: null,
-  skippedPermission: false,
-  permissionError: null,
-
-  checkPermission: async () => {
-    try {
-      set({ permission: await getAudioPermission(), permissionError: null });
-    } catch (error) {
-      // Still show the permission screen, with the reason.
-      set({ permission: 'undetermined', permissionError: toAppError(PERMISSION_ERROR, error) });
-    }
-  },
-
-  requestPermission: async () => {
-    try {
-      set({ permission: await requestAudioPermission(), permissionError: null });
-    } catch (error) {
-      set({ permissionError: toAppError(PERMISSION_ERROR, error) });
-    }
-  },
-
-  loadSongs: async () => {
-    if (get().status === 'loading') return;
-    fullLoadCount += 1;
-    set({ status: 'loading', error: null });
-    try {
-      const songs = await loadAllSongs();
-      set({ songs, songsById: toSongsById(songs), status: 'ready' });
-    } catch (error) {
-      set({ status: 'error', error: toLoadError(error) });
-      // Access was removed (e.g. in the system settings): re-check, so the screen offers "Grant access"
-      // instead of a "Try again" button that would keep failing.
-      if (getErrorCode(error) === 'ERR_MISSING_AUDIO_PERMISSION') {
-        await get().checkPermission();
-      }
-    }
-  },
-
-  refreshSongs: async () => {
-    const { status, isRefreshing } = get();
-    if (status !== 'ready' || isRefreshing) return;
+export const useLibraryStore = create<LibraryState>()((set, get) => {
+  /** One quiet rescan (see refreshSongs). */
+  async function quietScan(): Promise<SongChanges | null> {
     set({ isRefreshing: true });
     const loadCountAtStart = fullLoadCount;
     try {
       const scanned = await loadAllSongs();
       // A full load (loadSongs) started meanwhile: its result is newer, keep it.
-      if (fullLoadCount !== loadCountAtStart || get().status !== 'ready') return;
-      const songs = mergeSongs(get().songs, scanned);
-      if (songs !== get().songs) {
+      if (fullLoadCount !== loadCountAtStart || get().status !== 'ready') return null;
+      const oldSongs = get().songs;
+      const songs = mergeSongs(oldSongs, scanned);
+      if (songs !== oldSongs) {
         set({ songs, songsById: toSongsById(songs) });
       }
+      set({ lastScanAt: Date.now() });
+      return getSongChanges(oldSongs, songs);
     } catch {
       // Keep the current list. If access was removed, the permission recheck shows the right screen.
+      return null;
     } finally {
       set({ isRefreshing: false });
     }
-  },
+  }
 
-  skipPermission: () => set({ skippedPermission: true }),
-}));
+  return {
+    songs: [],
+    songsById: {},
+    status: 'idle',
+    isRefreshing: false,
+    lastScanAt: null,
+    error: null,
+    permission: null,
+    skippedPermission: false,
+    permissionError: null,
+
+    checkPermission: async () => {
+      try {
+        set({ permission: await getAudioPermission(), permissionError: null });
+      } catch (error) {
+        // Still show the permission screen, with the reason.
+        set({ permission: 'undetermined', permissionError: toAppError(PERMISSION_ERROR, error) });
+      }
+    },
+
+    requestPermission: async () => {
+      try {
+        set({ permission: await requestAudioPermission(), permissionError: null });
+      } catch (error) {
+        set({ permissionError: toAppError(PERMISSION_ERROR, error) });
+      }
+    },
+
+    loadSongs: async () => {
+      if (get().status === 'loading') return;
+      fullLoadCount += 1;
+      set({ status: 'loading', error: null });
+      try {
+        const songs = await loadAllSongs();
+        set({ songs, songsById: toSongsById(songs), status: 'ready', lastScanAt: Date.now() });
+      } catch (error) {
+        set({ status: 'error', error: toLoadError(error) });
+        // Access was removed (e.g. in the system settings): re-check, so the screen offers "Grant access"
+        // instead of a "Try again" button that would keep failing.
+        if (getErrorCode(error) === 'ERR_MISSING_AUDIO_PERMISSION') {
+          await get().checkPermission();
+        }
+      }
+    },
+
+    refreshSongs: () => {
+      if (runningRefresh) return runningRefresh;
+      if (get().status !== 'ready') return Promise.resolve(null);
+      runningRefresh = quietScan().finally(() => {
+        runningRefresh = null;
+      });
+      return runningRefresh;
+    },
+
+    rescan: async () => {
+      const { status, permission } = get();
+      if (status === 'ready') return get().refreshSongs();
+      if (status === 'loading' || permission !== 'granted') return null;
+      const oldSongs = get().songs;
+      await get().loadSongs();
+      return get().status === 'ready' ? getSongChanges(oldSongs, get().songs) : null;
+    },
+
+    skipPermission: () => set({ skippedPermission: true }),
+  };
+});

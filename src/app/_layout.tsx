@@ -10,6 +10,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
+import { useLastSession } from '@/hooks/useLastSession';
 import { useLibraryStartup } from '@/hooks/useLibraryStartup';
 import { useNavigationTheme } from '@/hooks/useNavigationTheme';
 import { usePlayerErrorToast } from '@/hooks/usePlayerErrorToast';
@@ -41,6 +42,8 @@ export default function RootLayout() {
   const { isPermissionChecked, canEnterApp } = useLibraryStartup();
   usePlayerErrorToast();
   useSavedDataRematch();
+  // "Resume last song": saves what plays and loads it again (paused) on the next start.
+  useLastSession();
   // The theme (OLED / Light + accent) for system bars, the root view and the navigators.
   useSystemUiTheme();
   const { colors, isDark } = useTheme();

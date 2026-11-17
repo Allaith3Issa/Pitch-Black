@@ -63,6 +63,13 @@ export const sizes = {
   dashedOutline: 2,
   /** Dialog width (DESIGN.md: 312). */
   dialog: 312,
+  /** On/off switch (DESIGN.md: 44 × 26) and its round knob. */
+  toggleWidth: 44,
+  toggleHeight: 26,
+  toggleKnob: 20,
+  /** Settings row with a subtitle (Figma 12b: 62) and without one (46). */
+  settingsRow: 62,
+  settingsRowCompact: 46,
 } as const;
 
 // Icon line thickness (lucide strokeWidth). The active tab icon is bolder.

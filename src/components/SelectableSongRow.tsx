@@ -60,7 +60,7 @@ const useStyles = makeStyles(({ colors }) => ({
     paddingHorizontal: screenPadding,
   },
   pressed: {
-    opacity: 0.7,
+    opacity: opacity.pressed,
   },
   texts: {
     flex: 1,

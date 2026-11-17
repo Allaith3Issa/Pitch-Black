@@ -92,6 +92,13 @@ Background / letter, per theme.
 
 Section labels (SORT BY, LIBRARY...) are uppercase with ~10% letter spacing.
 
+## Opacity → `src/theme/opacity.ts`
+
+| Token | Value | Use |
+|---|---|---|
+| `pressed` | 0.7 | Every button and row while it is pressed |
+| `disabled` | 0.4 | Disabled buttons, checkboxes and rows |
+
 ---
 
 ## Components → `src/components`
@@ -106,10 +113,12 @@ Section labels (SORT BY, LIBRARY...) are uppercase with ~10% letter spacing.
 | `Chip` | Pill, `surface2`, sort icon 16 + label (13 Medium) |
 | `IconButton` | 44×44 round touch area, icon 24 |
 | `BottomSheet` | `surface`, top radius 24, 1px `border`, handle 36×4 (`textTertiary`), scrim behind |
-| `SheetOption` | Icon 20 + label 15. Selected: `surface2` bg + check icon |
+| `SheetOption` | Icon 20 (optional: the Skip by options have none) + label 15. Selected: `surface2` bg + check icon |
 | `Dialog` | Centered, width 312, `surface`, radius 24 |
 | `TextInput` | Height 44–48, `surface2`, radius 12. Focused: 1.5px `primary` border. Error text under it (12, `primaryText`). Code: `TextField` |
-| `Toggle` | 44×26. On: `primary` track, white knob. Off: `surface2` track |
+| `Toggle` | 44×26 (touch area 44 high). On: `primary` track, white knob. Off: `surface2` track. The knob slides (150 ms). Screen readers: role "switch" + on/off state |
+| `SettingsCard` | `surface`, radius 16, screen side margin. Groups the rows of one Settings section |
+| `SettingsRow` | Icon 20 (`textSecondary`) + title (15 Medium) + optional subtitle (12 `textSecondary`). Right side: value (13 `textSecondary`) + chevron 18 (`textTertiary`) when tappable, or a Toggle. Height 62 with a subtitle, 46 without. Disabled: `opacity.disabled` |
 | `SegmentedControl` | Height 44, `surface2` track, radius 12, 4px padding. Selected segment: `primary` bg (radius 8), `onPrimary` label Semi Bold. Others: `textSecondary` label |
 | `AccentSwatch` | 36 circle in the accent's `primary`, inside a 44 touch area. Selected: 2px ring in `text` + white check |
 | `Checkbox` | 24 round. On: `primary` + white check. Off: 2px `textTertiary` border. Disabled: dimmed |
@@ -124,7 +133,7 @@ Section labels (SORT BY, LIBRARY...) are uppercase with ~10% letter spacing.
 | # | Figma frame | Route (`src/app/`) | Notes |
 |---|---|---|---|
 | 01 | Permission | `permission.tsx` | Big music icon, "Access your music", Allow access (Primary), Not now |
-| 02 | Songs | `(tabs)/index.tsx` | Title + search icon, "N songs" + sort chip, Play / Shuffle, song list, Mini Player. **Shuffle button** (also on Favorites and Playlist Detail) is a toggle: off → turns shuffle on and plays a random song; on → turns shuffle off like the Now Playing icon (current song keeps playing, next songs in list order). Style: Active while on, Secondary when off |
+| 02 | Songs | `(tabs)/index.tsx` | Title + search icon, "N songs" + sort chip, Play / Shuffle, song list, Mini Player. **Shuffle button** (also on Favorites and Playlist Detail) is a toggle: shuffle on **and** the queue comes from this list → turns shuffle off like the Now Playing icon (current song keeps playing, next songs in list order); otherwise → turns shuffle on and plays this list from a random song. Style: Active while on, Secondary when off |
 | 03 | Sort Sheet | component (sheet) | SORT BY: Name, Date added, Most played (trending-up icon, Step 4C) · ORDER: Ascending, Descending. Chip labels: "Name · A–Z / Z–A", "Date added · Oldest / Newest", "Most played · Least / Most" (Descending = most played first; picking "Most played" switches to Descending). The "Most played" order is frozen while the list is on screen; it updates when the screen is shown again or the sort changes |
 | 04 | Song Options | component (sheet) | Opened from the song "⋯" on every song list. Song header, Add to / Remove from favorites, Add to playlist (switches the same sheet to screen 13), Remove from playlist (only on Playlist Detail). Song info and Share: Step 6 |
 | 05 | Search | `search.tsx` | Back + input with clear, results count, song list |
@@ -134,7 +143,7 @@ Section labels (SORT BY, LIBRARY...) are uppercase with ~10% letter spacing.
 | 09 | Playlist Detail | `playlist/[id]/index.tsx` | Back + ⋯, cover 120, "PLAYLIST", name, "8 songs · 31 min", Play / Shuffle, Add songs, list. "N songs are not on this phone" when saved songs are missing; "No songs yet. Tap \"Add songs\" to add some." when empty. **Mini Player at the bottom, no tab bar** (Allaith's decision; Figma shows the tab bar) |
 | 10 | Add Songs | `playlist/[id]/add-songs.tsx` (modal) | Close, "Add songs / to …", Add (n) button (disabled at 0), search, rows with checkboxes in the Songs sort order. Songs already in the playlist: checked, dimmed, cannot be changed |
 | 11 | Favorites | `(tabs)/favorites.tsx` | Title, count, Play / Shuffle, list (newest favorite first). No search icon for now (Ideas for later). Empty: "No favorites yet" |
-| 12 | Settings | `(tabs)/settings.tsx` | LIBRARY (Rescan, Default sort) · PLAYBACK (toggles, skip buttons on/off + 5 / 10 / 15 / 30 s) · COVERS ("Download covers on Wi-Fi only", default on) · ABOUT (version) |
+| 12 | Settings | `(tabs)/settings.tsx` | Figma 12d + 12b. APPEARANCE (Step 4B) · LIBRARY: Rescan music library ("Last scan: today, 20:14" / "yesterday, …" / "12 Nov, …"; "Scanning…" while it runs; quiet rescan, the list stays; toast when done: "Library is up to date" or "3 new songs, 1 song removed"), Default sort (opens the Sort sheet) · PLAYBACK: Resume last song (default on: the last queue and song come back **paused** at the saved position, never auto-play; nothing loaded if the song is gone), Skip buttons (default on; off = Now Playing hides them and previous / play / next stay grouped in the middle), Skip by (Figma 12c sheet: 5 / 10 / 15 / 30 seconds, default 10; dimmed while the skip buttons are off) · COVERS: "Download covers on Wi-Fi only" (default on, used in Step 6) · ABOUT: app name + version from the app config, no chevron. "Background playback" (in Figma) comes in Step 9 |
 | 13 | Add to Playlist | component (sheet) | "Add to playlist" + song, New playlist (creates it with this song), playlists with a checkbox: works like a checklist (tap = add / remove), the sheet stays open |
 
 The Mini Player and Tab Bar show on all tab screens; Playlist Detail shows only the Mini Player. The Mini Player is hidden when nothing is playing.

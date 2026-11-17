@@ -6,7 +6,7 @@ import Artwork from '@/components/Artwork';
 import IconButton from '@/components/IconButton';
 import PlayCount from '@/components/PlayCount';
 import { useTheme } from '@/hooks/useTheme';
-import { fonts, iconSizes, makeStyles, radius, screenPadding, sizes, spacing, typography } from '@/theme';
+import { fonts, iconSizes, makeStyles, opacity, radius, screenPadding, sizes, spacing, typography } from '@/theme';
 import type { Song } from '@/types/song';
 import { formatDuration } from '@/utils/formatDuration';
 
@@ -75,7 +75,7 @@ const useStyles = makeStyles(({ colors }) => ({
     borderRadius: radius.md,
   },
   pressed: {
-    opacity: 0.7,
+    opacity: opacity.pressed,
   },
   texts: {
     flex: 1,
