@@ -32,13 +32,23 @@ export const sizes = {
   /** Round play/pause button in the Mini Player. */
   miniPlayButton: 40,
   /** Progress line at the bottom of the Mini Player. */
-  progressLine: 2,
+  progressLine: 3,
   /** Segmented control height (Settings: Theme). */
   segmentedControl: 44,
   /** Accent color circle in Settings. */
   swatch: 36,
   /** Ring around the selected accent swatch. */
   swatchRing: 2,
+  /** Largest artwork on Now Playing (smaller on narrow screens). */
+  artworkPlayer: 296,
+  /** Round play/pause button on Now Playing. */
+  playButtonLarge: 76,
+  /** Previous / next buttons on Now Playing. */
+  playerSkipSong: 52,
+  /** Top bar on Now Playing. */
+  playerTopBar: 52,
+  /** Small dot under an active shuffle / repeat button. */
+  activeDot: 4,
 } as const;
 
 // Icon line thickness (lucide strokeWidth). The active tab icon is bolder.
@@ -59,4 +69,8 @@ export const iconSizes = {
   tab: 22,
   md: 24,
   hero: 52,
+  /** Shuffle / repeat on Now Playing. */
+  playerToggle: 22,
+  /** Previous / next / play-pause on Now Playing. */
+  playerMain: 30,
 } as const;

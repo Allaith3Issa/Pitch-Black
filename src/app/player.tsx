@@ -1,5 +1,5 @@
-import PlaceholderScreen from '@/components/PlaceholderScreen';
+import NowPlaying from '@/features/player/NowPlaying';
 
 export default function PlayerScreen() {
-  return <PlaceholderScreen title="Now Playing" />;
+  return <NowPlaying />;
 }

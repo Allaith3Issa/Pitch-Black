@@ -154,16 +154,23 @@ a song added in the background appears on return without a spinner, " _ Artist" 
 
 ## Step 5 — Now Playing & Mini Player
 Step 5: slider already in the Step 4 dev build.
-- [ ] (The basic Mini Player was built in Step 4.)
-- [ ] Tapping Mini Player opens Now Playing (screen 06)
-- [ ] Now Playing: artwork placeholder, title, artist, heart, slider (`@react-native-community/slider`), times
-- [ ] Seek with the slider
-- [ ] Shuffle (on/off) and Repeat (off / all / one)
-- [ ] Skip back / skip forward buttons around play/pause (default 10 s; options 5 / 10 / 15 / 30 s;
+- [x] (The basic Mini Player was built in Step 4.)
+- [x] Tapping Mini Player opens Now Playing (screen 06)
+- [x] Now Playing: artwork placeholder, title, artist, heart, slider (`@react-native-community/slider`), times
+- [x] Seek with the slider
+- [x] Shuffle (on/off) and Repeat (off / all / one)
+- [x] Skip back / skip forward buttons around play/pause (default 10 s; options 5 / 10 / 15 / 30 s;
       can be turned off). The setting UI comes in Step 8 — until then use the default.
-- [ ] "Shuffle" button on the Songs screen
+- [x] "Shuffle" button on the Songs screen
+- [x] Mini Player gestures (PanResponder): tap / swipe up = open Now Playing, swipe left / right = next / previous
+      song (card slides out, new song slides in); Mini Player `surface2` + 1px border, 3px progress line
+- [x] Now Playing slides up / down (300 ms) and closes with a swipe down (the slider never starts it)
+- [x] "Play" plays in list order and turns shuffle off; repeat "all" with shuffle re-shuffles each new round
 
 **Done when:** all controls on Now Playing work and stay in sync with the Mini Player.
+✅ Verified on device: seek without the thumb jumping back, skip ±10 s, shuffle on/off, repeat off / all / one
+(repeat-one counts again), Mini Player and Now Playing always show the same song, state and position,
+swipe gestures and the open / close slide animations, Mini Player readable in OLED and Light.
 
 ## Step 7 — Favorites & Playlists
 - [ ] Favorites: heart toggles in Song Options, Mini Player, Now Playing; Favorites tab lists them (screen 11)

@@ -10,6 +10,8 @@ import type { Song } from '@/types/song';
 type SongFlatListProps = {
   /** The songs exactly as shown. Tapping one plays this list from that song. */
   songs: Song[];
+  /** Names the list on Now Playing when a song from it plays (e.g. "All songs"). */
+  queueTitle: string;
   /** Hide the keyboard when the user scrolls (used on the Search screen). */
   dismissKeyboardOnDrag?: boolean;
 };
@@ -23,9 +25,9 @@ const getItemLayout = (_: ArrayLike<Song> | null | undefined, index: number) => 
 });
 
 /** A fast, scrollable list of SongRows. The song in the player is highlighted. */
-export default function SongFlatList({ songs, dismissKeyboardOnDrag = false }: SongFlatListProps) {
+export default function SongFlatList({ songs, queueTitle, dismissKeyboardOnDrag = false }: SongFlatListProps) {
   const currentSongId = useCurrentSongId();
-  const playFromList = usePlayFromList(songs);
+  const playFromList = usePlayFromList(songs, queueTitle);
 
   // SongRow is memoized: when the song changes, only the old and the new current row re-render.
   const renderItem = useCallback<ListRenderItem<Song>>(

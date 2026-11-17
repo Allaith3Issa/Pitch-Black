@@ -15,6 +15,8 @@ export type ThemeColors = {
   surface2: string;
   /** Dividers, outlines, slider track. */
   border: string;
+  /** Empty part of the Mini Player progress line (on `surface2`). */
+  progressTrack: string;
   /** Accent: Play button, play/pause circle, slider fill, toggles, checkboxes. */
   primary: string;
   /** Text / icons on `primary`. */

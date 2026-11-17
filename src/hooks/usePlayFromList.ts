@@ -7,8 +7,9 @@ import type { Song } from '@/types/song';
  * Returns a function for tapping a song in a list:
  * - the song that is already loaded → pause / play
  * - another song → play it, with the list exactly as shown as the queue
+ * `queueTitle` names the list on Now Playing (e.g. "All songs").
  */
-export function usePlayFromList(songs: Song[]): (index: number) => void {
+export function usePlayFromList(songs: Song[], queueTitle: string): (index: number) => void {
   const playQueue = usePlayerStore((state) => state.playQueue);
   const togglePlay = usePlayerStore((state) => state.togglePlay);
 
@@ -21,9 +22,10 @@ export function usePlayFromList(songs: Song[]): (index: number) => void {
         playQueue(
           songs.map((song) => song.id),
           index,
+          queueTitle,
         );
       }
     },
-    [songs, playQueue, togglePlay],
+    [songs, queueTitle, playQueue, togglePlay],
   );
 }

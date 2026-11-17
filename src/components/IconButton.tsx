@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Pressable, StyleSheet } from 'react-native';
+import { type AccessibilityState, Pressable, StyleSheet } from 'react-native';
 
 import { radius, sizes } from '@/theme';
 
@@ -7,16 +7,27 @@ type IconButtonProps = {
   icon: ReactNode;
   accessibilityLabel: string;
   onPress?: () => void;
+  /** Size of the round touch area. Default 44. */
+  size?: number;
+  /** For on/off buttons (e.g. shuffle): `{ selected: true }`. */
+  accessibilityState?: AccessibilityState;
 };
 
-/** 44×44 round touch area around a 24px icon. */
-export default function IconButton({ icon, accessibilityLabel, onPress }: IconButtonProps) {
+/** Round touch area (44×44 by default) around an icon. */
+export default function IconButton({
+  icon,
+  accessibilityLabel,
+  onPress,
+  size = sizes.touchTarget,
+  accessibilityState,
+}: IconButtonProps) {
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
-      style={({ pressed }) => [styles.button, pressed && styles.pressed]}
+      accessibilityState={accessibilityState}
+      style={({ pressed }) => [styles.button, { width: size, height: size }, pressed && styles.pressed]}
     >
       {icon}
     </Pressable>
@@ -25,8 +36,6 @@ export default function IconButton({ icon, accessibilityLabel, onPress }: IconBu
 
 const styles = StyleSheet.create({
   button: {
-    width: sizes.touchTarget,
-    height: sizes.touchTarget,
     borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',

@@ -20,7 +20,7 @@ export default function MiniPlayerProgress() {
 const useStyles = makeStyles(({ colors }) => ({
   track: {
     height: sizes.progressLine,
-    backgroundColor: colors.border,
+    backgroundColor: colors.progressTrack,
   },
   fill: {
     height: '100%',

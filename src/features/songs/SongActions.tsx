@@ -9,23 +9,25 @@ import type { Song } from '@/types/song';
 type SongActionsProps = {
   /** The list as shown on screen. */
   songs: Song[];
+  /** Names the list on Now Playing. */
+  queueTitle: string;
 };
 
 /** "Play" and "Shuffle" buttons above the song list. */
-export default function SongActions({ songs }: SongActionsProps) {
-  const playQueue = usePlayerStore((state) => state.playQueue);
+export default function SongActions({ songs, queueTitle }: SongActionsProps) {
+  const playInOrder = usePlayerStore((state) => state.playInOrder);
+  const shufflePlay = usePlayerStore((state) => state.shufflePlay);
 
-  const playAll = () =>
-    playQueue(
-      songs.map((song) => song.id),
-      0,
-    );
+  const ids = () => songs.map((song) => song.id);
+  // Turns shuffle off and plays the list in order.
+  const playAll = () => playInOrder(ids(), queueTitle);
+  // Turns shuffle on and starts from a random song.
+  const shuffleAll = () => shufflePlay(ids(), queueTitle);
 
   return (
     <View style={styles.row}>
       <Button label="Play" icon={Play} onPress={playAll} style={styles.button} />
-      {/* Shuffle gets its action in Step 5. */}
-      <Button label="Shuffle" icon={Shuffle} variant="secondary" onPress={() => undefined} style={styles.button} />
+      <Button label="Shuffle" icon={Shuffle} variant="secondary" onPress={shuffleAll} style={styles.button} />
     </View>
   );
 }

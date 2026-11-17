@@ -42,7 +42,7 @@ export default function SearchResults({ query }: SearchResultsProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.count}>{results.length === 1 ? '1 result' : `${results.length} results`}</Text>
-      <SongFlatList songs={results} dismissKeyboardOnDrag />
+      <SongFlatList songs={results} queueTitle="Search results" dismissKeyboardOnDrag />
     </View>
   );
 }

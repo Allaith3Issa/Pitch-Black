@@ -9,6 +9,9 @@ import { useSortedSongs } from '@/hooks/useSortedSongs';
 import { useTheme } from '@/hooks/useTheme';
 import { useLibraryStore } from '@/store/libraryStore';
 
+// Shown on Now Playing when a song from this list plays.
+const ALL_SONGS = 'All songs';
+
 /** The sorted song list with its loading / error / empty / no-access states. */
 export default function SongList() {
   const songs = useSortedSongs();
@@ -56,8 +59,8 @@ export default function SongList() {
 
   return (
     <>
-      <SongActions songs={songs} />
-      <SongFlatList songs={songs} />
+      <SongActions songs={songs} queueTitle={ALL_SONGS} />
+      <SongFlatList songs={songs} queueTitle={ALL_SONGS} />
     </>
   );
 }

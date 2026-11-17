@@ -1,16 +1,22 @@
 import { create } from 'zustand';
 
 import * as audio from '@/services/audioPlayer';
-import { pausePlayThrough, startPlayThrough, trackPlayThrough } from '@/services/playCountTracker';
-import { useLibraryStore } from '@/store/libraryStore';
+import { pausePlayThrough } from '@/services/playCountTracker';
 import { usePlaybackProgressStore } from '@/store/playbackProgressStore';
-import { getNextIndex, getPreviousAction } from '@/utils/queue';
+import { createPlayerEngine } from '@/store/playerEngine';
+import { useSettingsStore } from '@/store/settingsStore';
+import { randomIndex, shuffleIds } from '@/utils/shuffle';
+import { getSkipTarget } from '@/utils/skip';
 
 export type PlaybackStatus = 'idle' | 'loading' | 'playing' | 'paused' | 'error';
 
-type PlayerState = {
-  /** Song ids in play order (never copies of songs). */
+export type PlayerState = {
+  /** Song ids in the order of the list where playback started (never copies of songs). */
+  listQueue: string[];
+  /** Song ids in play order: `listQueue`, or a shuffled copy of it when shuffle is on. */
   queue: string[];
+  /** Where the queue comes from, shown on Now Playing (e.g. "All songs"). */
+  queueTitle: string;
   /** Index in `queue` of the current song, or -1 when nothing is loaded. */
   currentIndex: number;
   isPlaying: boolean;
@@ -18,131 +24,75 @@ type PlayerState = {
   /** A short message to show once (e.g. a song could not be played), or `null`. */
   errorMessage: string | null;
 
-  playQueue: (ids: string[], startIndex: number) => void;
+  playQueue: (ids: string[], startIndex: number, title: string) => void;
+  /** "Play" button: turns shuffle off and plays `ids` in list order from the first song. */
+  playInOrder: (ids: string[], title: string) => void;
+  /** Turns shuffle on and plays `ids` from a random song. */
+  shufflePlay: (ids: string[], title: string) => void;
+  /** Shuffle on: the other songs are mixed. Off: back to the list order. The current song keeps playing. */
+  toggleShuffle: () => void;
   togglePlay: () => void;
   next: () => void;
+  /** "Previous" button: restarts the song after 3 s, otherwise goes to the previous song. */
   previous: () => void;
+  /** Always goes to the previous song (Mini Player swipe). */
+  previousSong: () => void;
   seekTo: (seconds: number) => void;
+  /** Jumps forward (positive) or back (negative) inside the song. */
+  skipBy: (deltaSec: number) => void;
   clearError: () => void;
 };
 
-/**
- * After a tap (play, pause, new song) the native player needs a moment to follow, and a status
- * update that was already on its way still has the old play/pause state. For this long after a
- * tap we trust the tap, not the player's play/pause state, so the icons do not flicker.
- */
-const COMMAND_GRACE_MS = 600;
-let lastCommandAt = 0;
-
-function markCommand() {
-  lastCommandAt = Date.now();
-}
-
-// Not persisted yet.
+// Not persisted (only shuffle and repeat are saved, in settingsStore).
+// The playback logic itself is in store/playerEngine.
 // Note (development only): Fast Refresh of this file or of services/audioPlayer adds a second
 // listener / player. Reload the app (press "r") if you hear two songs at once.
 export const usePlayerStore = create<PlayerState>()((set, get) => {
-  /** Stops at the start of the current song, so tapping play starts it again. */
-  function stop(status: PlaybackStatus) {
-    markCommand();
-    startPlayThrough();
-    audio.pause();
-    audio.seekTo(0).catch(() => undefined);
-    usePlaybackProgressStore.setState({ positionSec: 0 });
-    set({ isPlaying: false, status });
-  }
-
-  /** Loads and plays queue[index]. Returns `false` when the song cannot be started. */
-  function startSong(index: number): boolean {
-    const song = useLibraryStore.getState().songsById[get().queue[index]];
-    markCommand();
-    startPlayThrough();
-    set({ currentIndex: index, status: 'loading', isPlaying: true });
-    usePlaybackProgressStore.setState({ positionSec: 0, durationSec: song?.durationSec ?? 0 });
-
-    // The song is no longer in the library (e.g. the file was deleted).
-    if (!song) return false;
-    try {
-      audio.load(song.uri);
-      audio.play();
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  function reportFailedSong(index: number) {
-    const title = useLibraryStore.getState().songsById[get().queue[index]]?.title;
-    set({ errorMessage: title ? `Could not play "${title}". Skipped.` : 'Could not play this song. Skipped.' });
-  }
-
-  /** Plays the song at `index`. Songs that cannot be started are skipped; stops at the end of the queue. */
-  function playFrom(index: number | null) {
-    let current = index;
-    while (current !== null) {
-      if (startSong(current)) return;
-      reportFailedSong(current);
-      current = getNextIndex(current, get().queue.length);
-    }
-    stop('error');
-  }
-
-  function handleStatus(status: audio.PlayerStatus) {
-    const state = get();
-    if (state.currentIndex === -1) return;
-
-    // The native player sends an error only once, in one update.
-    if (status.error) {
-      if (state.status === 'error') return;
-      reportFailedSong(state.currentIndex);
-      playFrom(getNextIndex(state.currentIndex, state.queue.length));
-      return;
-    }
-
-    if (status.didJustFinish) {
-      const nextIndex = getNextIndex(state.currentIndex, state.queue.length);
-      if (nextIndex === null) {
-        stop('paused');
-      } else {
-        playFrom(nextIndex);
-      }
-      return;
-    }
-
-    usePlaybackProgressStore.setState(
-      status.duration > 0
-        ? { positionSec: status.currentTime, durationSec: status.duration }
-        : { positionSec: status.currentTime },
-    );
-    // Play count (see services/playCountTracker).
-    const song = useLibraryStore.getState().songsById[state.queue[state.currentIndex]];
-    if (song) trackPlayThrough(song, status);
-
-    if (Date.now() - lastCommandAt < COMMAND_GRACE_MS) return;
-
-    if (status.playing) {
-      if (state.status !== 'playing') set({ status: 'playing', isPlaying: true });
-    } else if (state.status === 'playing' || (state.status === 'loading' && status.playbackState === 'ready')) {
-      // The player stopped (or could not start) by itself: another app or a phone call has the
-      // audio focus, or headphones were unplugged.
-      set({ status: 'paused', isPlaying: false });
-    }
-  }
+  const engine = createPlayerEngine(set, get);
 
   // Listen to the player for the whole life of the app.
-  audio.onStatus(handleStatus);
+  audio.onStatus(engine.handleStatus);
 
   return {
+    listQueue: [],
     queue: [],
+    queueTitle: '',
     currentIndex: -1,
     isPlaying: false,
     status: 'idle',
     errorMessage: null,
 
-    playQueue: (ids, startIndex) => {
+    playQueue: (ids, startIndex, title) => {
       if (ids.length === 0) return;
-      set({ queue: ids });
-      playFrom(startIndex);
+      const shuffle = useSettingsStore.getState().shuffle;
+      // With shuffle on, the tapped song plays first and the others follow in a mixed order.
+      set({ listQueue: ids, queue: shuffle ? shuffleIds(ids, ids[startIndex]) : ids, queueTitle: title });
+      engine.startQueue(shuffle ? 0 : startIndex);
+    },
+
+    playInOrder: (ids, title) => {
+      if (ids.length === 0) return;
+      useSettingsStore.getState().setShuffle(false);
+      get().playQueue(ids, 0, title);
+    },
+
+    shufflePlay: (ids, title) => {
+      if (ids.length === 0) return;
+      useSettingsStore.getState().setShuffle(true);
+      get().playQueue(ids, randomIndex(ids.length), title);
+    },
+
+    toggleShuffle: () => {
+      const shuffle = !useSettingsStore.getState().shuffle;
+      useSettingsStore.getState().setShuffle(shuffle);
+      const { listQueue, queue, currentIndex } = get();
+      if (currentIndex === -1) return;
+      const currentId = queue[currentIndex];
+      if (shuffle) {
+        set({ queue: shuffleIds(listQueue, currentId), currentIndex: 0 });
+      } else {
+        set({ queue: listQueue, currentIndex: Math.max(0, listQueue.indexOf(currentId)) });
+      }
     },
 
     togglePlay: () => {
@@ -150,41 +100,32 @@ export const usePlayerStore = create<PlayerState>()((set, get) => {
       if (currentIndex === -1) return;
       if (status === 'error') {
         // Try the same song again.
-        playFrom(currentIndex);
+        engine.startQueue(currentIndex);
       } else if (isPlaying) {
-        markCommand();
         pausePlayThrough();
-        audio.pause();
-        set({ isPlaying: false, status: 'paused' });
+        engine.pause();
       } else {
-        markCommand();
-        audio.play();
-        set({ isPlaying: true, status: 'playing' });
+        engine.play();
       }
     },
 
-    next: () => {
-      const { currentIndex, queue } = get();
-      const nextIndex = getNextIndex(currentIndex, queue.length);
-      if (nextIndex !== null) playFrom(nextIndex);
-    },
+    next: () => engine.goNext(false),
 
-    previous: () => {
-      const { currentIndex } = get();
-      if (currentIndex === -1) return;
-      const action = getPreviousAction(currentIndex, usePlaybackProgressStore.getState().positionSec);
-      if (action.type === 'restart') {
-        // Restarting the song is a new play-through: it can count again (same rule as repeat-one).
-        startPlayThrough();
-        get().seekTo(0);
+    previous: () => engine.goBack(usePlaybackProgressStore.getState().positionSec),
+
+    previousSong: () => engine.goBack(0),
+
+    seekTo: engine.seek,
+
+    skipBy: (deltaSec) => {
+      if (get().currentIndex === -1) return;
+      const { positionSec, durationSec } = usePlaybackProgressStore.getState();
+      const target = getSkipTarget(positionSec, durationSec, deltaSec);
+      if (target === null) {
+        engine.goNext(true);
       } else {
-        playFrom(action.index);
+        engine.seek(target);
       }
-    },
-
-    seekTo: (seconds) => {
-      usePlaybackProgressStore.setState({ positionSec: seconds });
-      audio.seekTo(seconds).catch(() => undefined);
     },
 
     clearError: () => set({ errorMessage: null }),

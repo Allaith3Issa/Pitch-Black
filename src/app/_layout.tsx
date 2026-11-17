@@ -70,7 +70,16 @@ export default function RootLayout() {
         <Stack.Protected guard={canEnterApp}>
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="search" />
-          <Stack.Screen name="player" options={{ presentation: 'modal' }} />
+          {/* Transparent and without the navigator's animation: Now Playing slides itself up and down
+              (see hooks/useNowPlayingSheet), and the app stays visible behind it while it moves. */}
+          <Stack.Screen
+            name="player"
+            options={{
+              presentation: 'transparentModal',
+              animation: 'none',
+              contentStyle: { backgroundColor: 'transparent' },
+            }}
+          />
           <Stack.Screen name="playlist/[id]/index" />
           <Stack.Screen name="playlist/[id]/add-songs" options={{ presentation: 'modal' }} />
         </Stack.Protected>

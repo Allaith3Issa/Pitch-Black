@@ -26,6 +26,7 @@ Since Step 4B the colors depend on the **theme** (System / OLED / Light, default
 | `surface` | `#121212` | `#F4F4F5` | Mini player, tab bar, sheets, dialogs, setting cards |
 | `surface2` | `#1E1E1E` | `#E9E9EC` | Secondary buttons, inputs, chips, artwork placeholder, segmented control track |
 | `border` | `#262626` | `#E4E4E7` | Dividers, outlines, slider track |
+| `progressTrack` | `#262626` | `#C4C4CA` | Empty part of the Mini Player progress line (darker in Light, so it shows on `surface2`) |
 | `text` | `#FFFFFF` | `#0A0A0A` | Main text and icons |
 | `textSecondary` | `#8E8E8E` | `#6B6B70` | Subtitles, meta, inactive icons |
 | `textTertiary` | `#5C5C5C` | `#9A9AA0` | Section labels, inactive tabs, placeholders |
@@ -87,6 +88,7 @@ Background / letter, per theme.
 | `bodySmall` | 13 | Regular / Medium | Subtitles, meta, chip |
 | `caption` | 12 | Regular / Semi Bold | Times, section labels |
 | `tabLabel` | 11 | Medium (active: Semi Bold) | Tab bar labels, "NOW PLAYING" |
+| `iconLabel` | 8 | Bold | Number inside the skip back / forward icons ("10") |
 
 Section labels (SORT BY, LIBRARY...) are uppercase with ~10% letter spacing.
 
@@ -99,7 +101,7 @@ Section labels (SORT BY, LIBRARY...) are uppercase with ~10% letter spacing.
 | `TabBar` | Floating bar, `surface`, radius 32, 1px `border`, 12px side margin, 64 high. 4 tabs (icon + label): Songs (music), Playlists (list-music), Favorites (heart), Settings (**gear**). **Active:** no background behind the icon; icon `primaryText` with a bolder line (strokeWidth 2.6), label `primaryText` Semi Bold. **Inactive:** icon `textTertiary` (strokeWidth 2), label Medium. Icons keep the same size, so nothing moves when switching tabs |
 | `SongRow` | Height ~64. Artwork 48 + title (15 Medium) + subtitle "Artist • 3:45 • ▶ 12" (13 `textSecondary`) + "⋯" button. **Play count** (since Step 4C): small filled play icon (12) + number in `textTertiary`, only when the count is > 0. Artist, duration and count are separate texts (bidi-safe); duration and count always stay visible, the artist is cut off first. **Playing state:** `primarySoft` background, radius 12, title `primaryText` Semi Bold, equalizer icon |
 | `Artwork` | `surface2` square with a music icon in `textTertiary`. Sizes: 44, 48, 120, 296. From Step 6: the song's cover; songs without a cover get a colored placeholder with the first letter of the title |
-| `MiniPlayer` | `surface`, radius 14, 8px margin. Artwork 44, title (14 Semi Bold), artist (12), heart, **next** (Allaith's decision, not in Figma), 40px `primary` play/pause circle. 2px progress line at the bottom (`border` track, `primary` fill) |
+| `MiniPlayer` | `surface2`, 1px `border`, radius 14, 8px margin (Step 5: stands out from the song list). Artwork 44, title (14 Semi Bold), artist (12), heart, **next** (Allaith's decision, not in Figma), 40px `primary` play/pause circle. 3px progress line at the bottom (`progressTrack` track, `primary` fill). **Gestures (Step 5):** tap or swipe up = open Now Playing, swipe left = next song, swipe right = previous song. The card follows the finger sideways; past 60 px it slides out in that direction and the new song slides in from the other side (~270 ms), a shorter swipe springs back; a move under 12 px stays a tap |
 | `Button` | Height 44, radius 12, icon + label (15 Semi Bold). **Primary:** `primary` bg, white content. **Secondary:** `surface2` bg, white content |
 | `Chip` | Pill, `surface2`, sort icon 16 + label (13 Medium) |
 | `IconButton` | 44×44 round touch area, icon 24 |
@@ -123,7 +125,7 @@ Section labels (SORT BY, LIBRARY...) are uppercase with ~10% letter spacing.
 | 03 | Sort Sheet | component (sheet) | SORT BY: Name, Date added, Most played (trending-up icon, Step 4C) · ORDER: Ascending, Descending. Chip labels: "Name · A–Z / Z–A", "Date added · Oldest / Newest", "Most played · Least / Most" (Descending = most played first; picking "Most played" switches to Descending). The "Most played" order is frozen while the list is on screen; it updates when the screen is shown again or the sort changes |
 | 04 | Song Options | component (sheet) | Song header, Add to favorites, Add to playlist |
 | 05 | Search | `search.tsx` | Back + input with clear, results count, song list |
-| 06 | Now Playing | `player.tsx` (modal) | Chevron down, "NOW PLAYING / All songs", ⋯, artwork 296, title/artist + heart, slider + times, shuffle / prev / play-pause (76) / next / repeat. **New:** skip back / skip forward (default 10 s) around play/pause, can be turned off. No cover → "Search for a cover" button on the artwork placeholder; with a chosen cover → "Change cover" / "Remove cover" |
+| 06 | Now Playing | `player.tsx` (modal) | Slides up from the bottom (300 ms) and slides down when it closes (chevron, back button, or swipe down: follows the finger, closes after 120 px or a fast swipe, otherwise springs back; the slider never starts it). Chevron down, "NOW PLAYING / <queue>" ("All songs" or "Search results"), ⋯, artwork 296 (smaller on narrow screens), title/artist + heart, slider + times. **Controls (Allaith's decision, Layout A — differs from Figma 06b's single row):** main row skip back 10 s / previous (52) / play-pause (76) / next (52) / skip forward 10 s; under it shuffle (left) and repeat (right): active = `primaryText` + 4px dot, repeat-one uses the repeat-1 icon. Skip buttons can be turned off in Step 8. No cover → "Search for a cover" button on the artwork placeholder; with a chosen cover → "Change cover" / "Remove cover" |
 | 07 | Playlists | `(tabs)/playlists.tsx` | Title + plus, "Create playlist" dashed tile, playlist rows |
 | 08 | New Playlist Dialog | component (dialog) | Name input, Cancel / Create |
 | 09 | Playlist Detail | `playlist/[id]/index.tsx` | Back + ⋯, cover 120, name, "8 songs · 31 min", Play / Shuffle, Add songs, list |
